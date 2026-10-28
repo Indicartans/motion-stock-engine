@@ -1,6 +1,0 @@
-buatkan lagi motion video dengan tema abstrak dengan referensi style seperti di https://pin.it/6mKjTezTr
-
-note :
-- sesuaikan dengan struktur folder dan aturan yang sudah ada
-- gunakan animasi yang seamless loop
-- durasi video sekitar 5-10 detik
