@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
+  <title>Cyber Quantum Nexus - Motion Stock Asset</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: #030712;
+      color: #f3f4f6;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      overflow: hidden;
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+    }
+
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      background: radial-gradient(circle at 50% 50%, #0a1128 0%, #040817 50%, #01030a 100%);
+    }
+
+    canvas {
+      display: block;
+      width: 1920px;
+      height: 1080px;
+    }
+
+    /* Preview controls overlay (Visible only in normal browser preview, auto-hidden in render mode) */
+    #preview-controls {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(10, 17, 40, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 9999px;
+      padding: 10px 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.15);
+      z-index: 100;
+      transition: opacity 0.3s ease;
+    }
+
+    .hide-controls #preview-controls {
+      display: none !important;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #00f0ff, #0077ff);
+      color: #030712;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      border: none;
+      border-radius: 9999px;
+      padding: 6px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.6);
+      transform: scale(1.04);
+    }
+
+    .slider {
+      width: 320px;
+      accent-color: #00f0ff;
+      cursor: pointer;
+    }
+
+    .telemetry {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      letter-spacing: 1px;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: #a5f3fc;
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+  </style>
+
+  <!-- Load GSAP locally with CDN fallback -->
+  <script src="./node_modules/gsap/dist/gsap.min.js"></script>
+  <script>
+    if (typeof gsap === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"><\/script>');
+    }
+  </script>
+</head>
+<body>
+  <div id="canvas-container">
+    <canvas id="motionCanvas" width="1920" height="1080"></canvas>
+  </div>
+
+  <!-- Interactive HUD for browser preview (hidden during automated render) -->
+  <div id="preview-controls">
+    <button id="playBtn" class="btn">
+      <span id="playIcon">⏸</span> <span id="playText">PAUSE</span>
+    </button>
+    <input type="range" id="scrubber" class="slider" min="0" max="1" step="0.001" value="0">
+    <div class="telemetry" id="timeInfo">0.00s / 10.00s</div>
+    <div class="telemetry badge">FRAME: <span id="frameInfo">0</span> / 300</div>
+    <div class="badge" style="color: #4ade80; border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.1);">1080p 30FPS LOOP</div>
+  </div>
+
+  <script>
+    // Configuration constants (Matching rules.md specifications)
+    const CONFIG = {
+      width: 1920,
+      height: 1080,
+      duration: 10,       // Duration in seconds (Between 5 - 15s)
+      fps: 30,            // Minimum 30 fps
+      totalFrames: 300    // 10s * 30fps = 300 frames
+    };
+
+    const canvas = document.getElementById('motionCanvas');
+    const ctx = canvas.getContext('2d');
+    const cx = CONFIG.width / 2;
+    const cy = CONFIG.height / 2;
+
+    // -------------------------------------------------------------
+    // 3D Geometry Helpers (Icosahedron & Geodesic Quantum Core)
+    // -------------------------------------------------------------
+    const phi = (1 + Math.sqrt(5)) / 2;
+    const rawVertices = [
+      [-1,  phi, 0], [ 1,  phi, 0], [-1, -phi, 0], [ 1, -phi, 0],
+      [ 0, -1,  phi], [ 0,  1,  phi], [ 0, -1, -phi], [ 0,  1, -phi],
+      [ phi, 0, -1], [ phi, 0,  1], [-phi, 0, -1], [-phi, 0,  1]
+    ];
+
+    // Normalize to unit sphere
+    const icosaVertices = rawVertices.map(v => {
+      const len = Math.hypot(v[0], v[1], v[2]);
+      return [v[0] / len, v[1] / len, v[2] / len];
+    });
+
+    const icosaEdges = [];
+    for (let i = 0; i < icosaVertices.length; i++) {
+      for (let j = i + 1; j < icosaVertices.length; j++) {
+        const d = Math.hypot(
+          icosaVertices[i][0] - icosaVertices[j][0],
+          icosaVertices[i][1] - icosaVertices[j][1],
+          icosaVertices[i][2] - icosaVertices[j][2]
+        );
+        if (Math.abs(d - 1.051) < 0.1) {
+          icosaEdges.push([i, j]);
+        }
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Ambient Particle System (Deterministic Seamless Drift)
+    // -------------------------------------------------------------
+    const NUM_PARTICLES = 160;
+    const particles = [];
+    for (let i = 0; i < NUM_PARTICLES; i++) {
+      particles.push({
+        baseAngle: (i / NUM_PARTICLES) * Math.PI * 2,
+        baseDist: 140 + Math.random() * 640,
+        radialSpeed: (Math.random() > 0.5 ? 1 : -1) * (1 + Math.floor(Math.random() * 2)),
+        zBase: (Math.random() - 0.5) * 600,
+        size: 1.2 + Math.random() * 2.8,
+        colorType: Math.random() > 0.4 ? 'cyan' : (Math.random() > 0.5 ? 'violet' : 'emerald'),
+        glow: Math.random() * 12 + 6,
+        orbitTilt: (Math.random() - 0.5) * 0.8
+      });
+    }
+
+    // Energy wave rings (Outer HUD)
+    const WAVE_POINTS = 120;
+
+    // -------------------------------------------------------------
+    // Core Draw Routine (Deterministic based on progress: 0.0 -> 1.0)
+    // -------------------------------------------------------------
+    function renderScene(progress) {
+      // Loop phase: 0.0 to 1.0 translates to 0 to 2*PI seamlessly
+      const tau = Math.PI * 2;
+      const angleProgress = progress * tau;
+
+      // 1. Clear background
+      ctx.fillStyle = '#02050e';
+      ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+
+      // 2. Ambient Deep Radiant Glows
+      const bgGlow1 = ctx.createRadialGradient(cx, cy, 50, cx, cy, 750);
+      const pulse1 = 0.5 + 0.5 * Math.sin(angleProgress * 2);
+      bgGlow1.addColorStop(0, `rgba(0, 160, 255, ${0.12 + 0.05 * pulse1})`);
+      bgGlow1.addColorStop(0.4, `rgba(99, 102, 241, ${0.08 + 0.03 * pulse1})`);
+      bgGlow1.addColorStop(0.75, 'rgba(12, 10, 36, 0.4)');
+      bgGlow1.addColorStop(1, 'rgba(2, 5, 14, 0)');
+      ctx.fillStyle = bgGlow1;
+      ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+
+      // Secondary floating aura
+      const auraX = cx + Math.sin(angleProgress) * 90;
+      const auraY = cy + Math.cos(angleProgress) * 50;
+      const bgGlow2 = ctx.createRadialGradient(auraX, auraY, 20, auraX, auraY, 480);
+      bgGlow2.addColorStop(0, 'rgba(0, 255, 200, 0.06)');
+      bgGlow2.addColorStop(0.6, 'rgba(139, 92, 246, 0.04)');
+      bgGlow2.addColorStop(1, 'rgba(2, 5, 14, 0)');
+      ctx.fillStyle = bgGlow2;
+      ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+
+      // 3. Perspective Grid Ground & Ceiling Lines
+      drawPerspectiveGrid(angleProgress);
+
+      // 4. Ambient Orbiting Particle Dust (Looping 3D)
+      drawAmbientParticles(angleProgress);
+
+      // 5. Outer Sci-Fi HUD Reticles & Waveform Ring
+      drawOuterHUD(angleProgress);
+
+      // 6. 3D Gyroscope Gimbal Rings
+      drawGimbalRings(angleProgress);
+
+      // 7. Rotating 3D Quantum Icosahedron / Polyhedron Core
+      drawQuantumIcosahedron(angleProgress);
+
+      // 8. Central Radiant Plasma Star
+      drawCentralPlasma(angleProgress);
+
+      // 9. Precision Sci-Fi Corner Bracket Accents & Metadata
+      drawSciFiAccents(progress, angleProgress);
+    }
+
+    // -------------------------------------------------------------
+    // Perspective Grid Lines
+    // -------------------------------------------------------------
+    function drawPerspectiveGrid(angleProgress) {
+      ctx.save();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+      
+      const gridY = 880;
+      const horizonY = 540;
+      const count = 18;
+      for (let i = -count; i <= count; i++) {
+        const xOffset = i * 85;
+        ctx.beginPath();
+        ctx.moveTo(cx, horizonY);
+        ctx.lineTo(cx + xOffset * 3.5, CONFIG.height);
+        ctx.stroke();
+      }
+
+      // Horizontal lines with perspective compression
+      const lines = 7;
+      for (let j = 1; j <= lines; j++) {
+        const p = j / lines;
+        const y = horizonY + Math.pow(p, 2.2) * (CONFIG.height - horizonY);
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(CONFIG.width, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // Ambient Looping Particles
+    // -------------------------------------------------------------
+    function drawAmbientParticles(angleProgress) {
+      ctx.save();
+      for (let i = 0; i < NUM_PARTICLES; i++) {
+        const p = particles[i];
+        // Exact integer loop rotation
+        const currentAngle = p.baseAngle + angleProgress * p.radialSpeed;
+        const currentDist = p.baseDist + Math.sin(angleProgress * 2 + p.baseAngle) * 35;
+        
+        // 3D rotation projection
+        const x3d = Math.cos(currentAngle) * currentDist;
+        const y3d = Math.sin(currentAngle) * currentDist * (0.45 + p.orbitTilt * 0.2);
+        const z3d = p.zBase + Math.cos(angleProgress + p.baseAngle) * 80;
+        
+        const fov = 800;
+        const scale = fov / (fov + z3d + 300);
+        const px = cx + x3d * scale;
+        const py = cy + y3d * scale;
+        const alpha = Math.max(0.15, Math.min(0.9, 0.4 + 0.3 * Math.sin(angleProgress * 3 + p.baseAngle)));
+
+        ctx.beginPath();
+        ctx.arc(px, py, p.size * scale, 0, Math.PI * 2);
+        if (p.colorType === 'cyan') {
+          ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
+          ctx.shadowColor = '#00f0ff';
+        } else if (p.colorType === 'violet') {
+          ctx.fillStyle = `rgba(168, 85, 247, ${alpha})`;
+          ctx.shadowColor = '#a855f7';
+        } else {
+          ctx.fillStyle = `rgba(52, 211, 153, ${alpha})`;
+          ctx.shadowColor = '#34d399';
+        }
+        ctx.shadowBlur = p.glow * scale;
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // Outer Sci-Fi HUD Reticles & Waveform Rings
+    // -------------------------------------------------------------
+    function drawOuterHUD(angleProgress) {
+      ctx.save();
+
+      // Outer Ring 1: Thin boundary with ticks
+      const rOuter = 460;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rOuter, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Dashed Rotating Ring (Clockwise 1x cycle)
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angleProgress);
+      ctx.beginPath();
+      ctx.arc(0, 0, rOuter - 18, 0, Math.PI * 2);
+      ctx.setLineDash([8, 16, 24, 16]);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+
+      // Counter-Rotating Segmented Ring (-1x cycle)
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(-angleProgress);
+      ctx.beginPath();
+      ctx.arc(0, 0, rOuter - 38, 0, Math.PI * 2);
+      ctx.setLineDash([40, 20, 10, 20]);
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.3)';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Precision Degree Tick Marks
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+      const totalTicks = 72;
+      for (let t = 0; t < totalTicks; t++) {
+        const theta = (t / totalTicks) * Math.PI * 2;
+        const isMajor = t % 6 === 0;
+        const tickLen = isMajor ? 12 : 5;
+        const r1 = rOuter - 8;
+        const r2 = r1 - tickLen;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(theta) * r1, Math.sin(theta) * r1);
+        ctx.lineTo(Math.cos(theta) * r2, Math.sin(theta) * r2);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Looping Undulating Audio / Energy Waveform Ring
+      ctx.save();
+      ctx.beginPath();
+      const waveRadius = 380;
+      for (let k = 0; k <= WAVE_POINTS; k++) {
+        const theta = (k / WAVE_POINTS) * Math.PI * 2;
+        // Integer harmonic waves guarantee seamlessness
+        const wave = Math.sin(theta * 8 + angleProgress * 2) * 9 +
+                     Math.cos(theta * 14 - angleProgress * 3) * 6;
+        const r = waveRadius + wave;
+        const wx = cx + Math.cos(theta) * r;
+        const wy = cy + Math.sin(theta) * r;
+        if (k === 0) ctx.moveTo(wx, wy);
+        else ctx.lineTo(wx, wy);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.55)';
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 10;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // 3D Gimbal Rings (Multi-axis Gyroscope)
+    // -------------------------------------------------------------
+    function drawGimbalRings(angleProgress) {
+      ctx.save();
+      const rings = [
+        { r: 310, rotX: angleProgress * 2, rotY: angleProgress, rotZ: 0.4, color: 'rgba(0, 240, 255, 0.6)', glow: '#00f0ff', dash: [14, 10] },
+        { r: 260, rotX: -angleProgress, rotY: angleProgress * 2, rotZ: -0.5, color: 'rgba(168, 85, 247, 0.55)', glow: '#a855f7', dash: [30, 15] },
+        { r: 210, rotX: angleProgress * 3, rotY: -angleProgress * 1, rotZ: 0.8, color: 'rgba(52, 211, 153, 0.5)', glow: '#34d399', dash: [8, 8] }
+      ];
+
+      rings.forEach(ring => {
+        ctx.beginPath();
+        const steps = 90;
+        let started = false;
+
+        for (let i = 0; i <= steps; i++) {
+          const theta = (i / steps) * Math.PI * 2;
+          let x = Math.cos(theta) * ring.r;
+          let y = Math.sin(theta) * ring.r;
+          let z = 0;
+
+          // Euler rotation
+          // Rotate X
+          let y1 = y * Math.cos(ring.rotX) - z * Math.sin(ring.rotX);
+          let z1 = y * Math.sin(ring.rotX) + z * Math.cos(ring.rotX);
+          // Rotate Y
+          let x2 = x * Math.cos(ring.rotY) + z1 * Math.sin(ring.rotY);
+          let z2 = -x * Math.sin(ring.rotY) + z1 * Math.cos(ring.rotY);
+          // Rotate Z
+          let x3 = x2 * Math.cos(ring.rotZ) - y1 * Math.sin(ring.rotZ);
+          let y3 = x2 * Math.sin(ring.rotZ) + y1 * Math.cos(ring.rotZ);
+
+          const fov = 750;
+          const scale = fov / (fov + z2 + 400);
+          const px = cx + x3 * scale;
+          const py = cy + y3 * scale;
+
+          if (!started) {
+            ctx.moveTo(px, py);
+            started = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+        ctx.closePath();
+        ctx.save();
+        ctx.setLineDash(ring.dash);
+        ctx.strokeStyle = ring.color;
+        ctx.shadowColor = ring.glow;
+        ctx.shadowBlur = 12;
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // Rotating 3D Quantum Icosahedron Core
+    // -------------------------------------------------------------
+    function drawQuantumIcosahedron(angleProgress) {
+      ctx.save();
+      const radius = 135 + Math.sin(angleProgress * 4) * 8;
+      
+      // Dual-axis seamless integer rotations (1x around Y, 2x around X)
+      const rotY = angleProgress * 1;
+      const rotX = angleProgress * 2;
+      const rotZ = angleProgress * 1;
+
+      // Project vertices
+      const projected = icosaVertices.map(v => {
+        let x = v[0] * radius;
+        let y = v[1] * radius;
+        let z = v[2] * radius;
+
+        // Rotate Y
+        let x1 = x * Math.cos(rotY) + z * Math.sin(rotY);
+        let z1 = -x * Math.sin(rotY) + z * Math.cos(rotY);
+        // Rotate X
+        let y2 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
+        let z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
+        // Rotate Z
+        let x3 = x1 * Math.cos(rotZ) - y2 * Math.sin(rotZ);
+        let y3 = x1 * Math.sin(rotZ) + y2 * Math.cos(rotZ);
+
+        const fov = 650;
+        const scale = fov / (fov + z2 + 350);
+        return {
+          x: cx + x3 * scale,
+          y: cy + y3 * scale,
+          z: z2,
+          scale: scale
+        };
+      });
+
+      // Draw Edges with Z-depth shading
+      ctx.lineWidth = 2.2;
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = '#00f0ff';
+
+      icosaEdges.forEach(([i, j]) => {
+        const p1 = projected[i];
+        const p2 = projected[j];
+        const avgZ = (p1.z + p2.z) / 2;
+        const alpha = Math.max(0.18, Math.min(1.0, 0.65 + avgZ / 260));
+
+        const grad = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+        grad.addColorStop(0, `rgba(0, 240, 255, ${alpha})`);
+        grad.addColorStop(0.5, `rgba(168, 85, 247, ${alpha * 0.9})`);
+        grad.addColorStop(1, `rgba(52, 211, 153, ${alpha})`);
+
+        ctx.strokeStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      });
+
+      // Draw Vertex Quantum Nodes
+      projected.forEach(p => {
+        const nodeAlpha = Math.max(0.3, Math.min(1.0, 0.7 + p.z / 200));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4.5 * p.scale, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${nodeAlpha})`;
+        ctx.shadowColor = '#00f0ff';
+        ctx.shadowBlur = 16;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 8 * p.scale, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0, 240, 255, ${nodeAlpha * 0.7})`;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      });
+
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // Central Plasma Star / Energy Source
+    // -------------------------------------------------------------
+    function drawCentralPlasma(angleProgress) {
+      ctx.save();
+      const pulse = Math.sin(angleProgress * 4) * 0.5 + 0.5;
+      const coreR = 38 + pulse * 12;
+
+      // Multi-layer high-intensity bloom
+      const grad = ctx.createRadialGradient(cx, cy, 2, cx, cy, coreR * 3);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.18, 'rgba(0, 240, 255, 0.95)');
+      grad.addColorStop(0.45, 'rgba(99, 102, 241, 0.6)');
+      grad.addColorStop(0.75, 'rgba(168, 85, 247, 0.2)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, coreR * 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Bright Core Center
+      ctx.beginPath();
+      ctx.arc(cx, cy, 14 + pulse * 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 30;
+      ctx.fill();
+
+      // Energy Cross Flare Beams
+      const beamLen = 90 + pulse * 35;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 18;
+
+      ctx.beginPath();
+      ctx.moveTo(cx - beamLen, cy);
+      ctx.lineTo(cx + beamLen, cy);
+      ctx.moveTo(cx, cy - beamLen);
+      ctx.lineTo(cx, cy + beamLen);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // Precision Sci-Fi Accents & HUD Telemetry
+    // -------------------------------------------------------------
+    function drawSciFiAccents(progress, angleProgress) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+      ctx.lineWidth = 2;
+
+      // 4 Corner brackets (Film / Cinema 1080p framing safe-zones)
+      const pad = 48;
+      const arm = 36;
+
+      // Top-Left
+      ctx.beginPath();
+      ctx.moveTo(pad, pad + arm);
+      ctx.lineTo(pad, pad);
+      ctx.lineTo(pad + arm, pad);
+      ctx.stroke();
+
+      // Top-Right
+      ctx.beginPath();
+      ctx.moveTo(CONFIG.width - pad - arm, pad);
+      ctx.lineTo(CONFIG.width - pad, pad);
+      ctx.lineTo(CONFIG.width - pad, pad + arm);
+      ctx.stroke();
+
+      // Bottom-Left
+      ctx.beginPath();
+      ctx.moveTo(pad, CONFIG.height - pad - arm);
+      ctx.lineTo(pad, CONFIG.height - pad);
+      ctx.lineTo(pad + arm, CONFIG.height - pad);
+      ctx.stroke();
+
+      // Bottom-Right
+      ctx.beginPath();
+      ctx.moveTo(CONFIG.width - pad - arm, CONFIG.height - pad);
+      ctx.lineTo(CONFIG.width - pad, CONFIG.height - pad);
+      ctx.lineTo(CONFIG.width - pad, CONFIG.height - pad - arm);
+      ctx.stroke();
+
+      // Telemetry Text Overlays (High-tech look without copyright)
+      ctx.fillStyle = 'rgba(0, 240, 255, 0.7)';
+      ctx.font = '12px "Consolas", "Courier New", monospace';
+      ctx.letterSpacing = '1px';
+
+      ctx.fillText('SYS.CORE // QUANTUM NEXUS v4.2', pad + 12, pad + 20);
+      ctx.fillText('RES: 1920x1080 FHD | 30.00 FPS', pad + 12, pad + 38);
+
+      const frameNow = Math.floor(progress * (CONFIG.totalFrames - 1));
+      ctx.fillText(`FRAME: ${String(frameNow).padStart(4, '0')} / ${CONFIG.totalFrames}`, CONFIG.width - pad - 210, pad + 20);
+      ctx.fillText(`TIME: ${(progress * CONFIG.duration).toFixed(2)}s / ${CONFIG.duration}.00s`, CONFIG.width - pad - 210, pad + 38);
+
+      // Bottom Center Loop Status Indicator
+      const percent = Math.floor(progress * 100);
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.65)';
+      ctx.fillText(`CYCLE PROGRESS [ ${percent}% ]`, cx - 85, CONFIG.height - pad - 12);
+
+      // Mini Progress Bar
+      const barW = 240;
+      const barH = 3;
+      const barX = cx - barW / 2;
+      const barY = CONFIG.height - pad;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.fillRect(barX, barY, barW, barH);
+      ctx.fillStyle = '#00f0ff';
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 8;
+      ctx.fillRect(barX, barY, barW * progress, barH);
+
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // GSAP Timeline & Deterministic Engine Integration
+    // -------------------------------------------------------------
+    // Proxy object for GSAP tweening
+    const animState = { progress: 0 };
+
+    // GSAP Timeline with infinite seamless loop
+    const masterTimeline = gsap.timeline({
+      duration: CONFIG.duration,
+      repeat: -1,
+      paused: false, // Auto-play in browser preview
+      ease: 'none'
+    });
+
+    masterTimeline.to(animState, {
+      progress: 1,
+      duration: CONFIG.duration,
+      ease: 'none',
+      onUpdate: () => {
+        renderScene(animState.progress);
+        updatePreviewHUD(animState.progress);
+      }
+    });
+
+    // -------------------------------------------------------------
+    // Global Deterministic API for Playwright (render.mjs)
+    // -------------------------------------------------------------
+    /**
+     * Called by Playwright script to render a precise frame.
+     * Pauses real-time playback, updates the canvas immediately.
+     */
+    window.renderFrame = function(frameIndex, totalFrames) {
+      if (!masterTimeline.paused()) {
+        masterTimeline.pause();
+        document.body.classList.add('hide-controls');
+      }
+      const total = totalFrames || CONFIG.totalFrames;
+      const p = Math.max(0, Math.min(1, frameIndex / (total - 1)));
+      animState.progress = p;
+      masterTimeline.progress(p);
+      renderScene(p);
+      return { frame: frameIndex, total: total, progress: p };
+    };
+
+    /**
+     * Seek to exact normalized progress (0.0 to 1.0)
+     */
+    window.seekToProgress = function(progress) {
+      if (!masterTimeline.paused()) {
+        masterTimeline.pause();
+        document.body.classList.add('hide-controls');
+      }
+      const p = Math.max(0, Math.min(1, progress));
+      animState.progress = p;
+      masterTimeline.progress(p);
+      renderScene(p);
+      return p;
+    };
+
+    // Flag to inform Playwright that canvas and scripts are completely initialized
+    window.__READY__ = true;
+
+    // -------------------------------------------------------------
+    // Interactive Controls (Browser Preview Mode)
+    // -------------------------------------------------------------
+    const playBtn = document.getElementById('playBtn');
+    const playIcon = document.getElementById('playIcon');
+    const playText = document.getElementById('playText');
+    const scrubber = document.getElementById('scrubber');
+    const timeInfo = document.getElementById('timeInfo');
+    const frameInfo = document.getElementById('frameInfo');
+
+    function updatePreviewHUD(p) {
+      scrubber.value = p;
+      const currentTime = (p * CONFIG.duration).toFixed(2);
+      timeInfo.textContent = `${currentTime}s / ${CONFIG.duration}.00s`;
+      const currentFrame = Math.floor(p * (CONFIG.totalFrames - 1));
+      frameInfo.textContent = currentFrame;
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (masterTimeline.paused()) {
+        masterTimeline.play();
+        playIcon.textContent = '⏸';
+        playText.textContent = 'PAUSE';
+      } else {
+        masterTimeline.pause();
+        playIcon.textContent = '▶';
+        playText.textContent = 'PLAY';
+      }
+    });
+
+    scrubber.addEventListener('input', (e) => {
+      masterTimeline.pause();
+      playIcon.textContent = '▶';
+      playText.textContent = 'PLAY';
+      const p = parseFloat(e.target.value);
+      animState.progress = p;
+      masterTimeline.progress(p);
+      renderScene(p);
+      updatePreviewHUD(p);
+    });
+
+    // Initial render
+    renderScene(0);
+  </script>
+</body>
+</html>

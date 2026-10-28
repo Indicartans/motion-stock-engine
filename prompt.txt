@@ -1,21 +1,2 @@
-buatkan file rules.md yang isinya aturan untuk mengerjakan project ini, sepert struktur folder, standar coding dan lain lain dengan requirements seperti di bawah
+buatkan animasi menggunakan html css dan js serta plugin gsap untuk membuat motion video yang bisa dijual di adaobe stock yang nanti bisa dirender dan dijadikan video mp4 hasil akhirnya
 
-aku ingin membuat project untuk generate motion video dari html, css dan js. project ini nanti digunakan untuk membuat motion video untuk dijual di adaobe stock.
-
-struktur folder nya nanti harus seperti ini:
-motion-stock-engine/
-├── index.html   # visual dan logika animasi
-├── render.mjs   # render frame menggunakan playwright
-├── package.json # config projek dan dependency
-├── frames/      # frame png sementara (hasil render frame disimpan disini)
-└── output/      # video mp4 hasil akhir (hasil generate motion video dari frame menggunakan ffmpeg)
-
-alur kerjanya 
-index.html → render.mjs → frames/ → FFmpeg → output/*.mp4
-
-untuk hasil video nya sesuai dengan kriteria di bawah:
-- resolusi full HD
-- file format .mp4
-- codec : h264/ProRes/PNG
-- durasi : 5-15 detik
-- minimal 30 fps
