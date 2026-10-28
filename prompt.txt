@@ -1,5 +1,4 @@
-sekarang buatkan lagi motion video dengan tema teknologi. buat style animasinya simple minimalis dan gen z able
-gunakan gsap untuk membuat animasi
+buatkan lagi motion video dengan tema abstrak dengan referensi style seperti di https://pin.it/6mKjTezTr
 
 note :
 - sesuaikan dengan struktur folder dan aturan yang sudah ada

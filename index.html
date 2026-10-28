@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
-  <title>Minimal Tech Gen-Z Motion - Adobe Stock Asset</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <title>Hypnotic Light Burst - Abstract Energy Rays & Color Flow</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,9 +13,9 @@
     }
 
     body {
-      background-color: #07080c;
+      background-color: #020204;
       color: #f8fafc;
-      font-family: 'Space Grotesk', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
       overflow: hidden;
       width: 1920px;
       height: 1080px;
@@ -31,7 +28,7 @@
       left: 0;
       width: 1920px;
       height: 1080px;
-      background: radial-gradient(circle at 50% 50%, #0e111a 0%, #08090e 60%, #040508 100%);
+      background: #020205;
     }
 
     canvas {
@@ -49,12 +46,12 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      background: rgba(14, 17, 26, 0.85);
+      background: rgba(10, 8, 18, 0.85);
       backdrop-filter: blur(16px);
-      border: 1px solid rgba(204, 255, 0, 0.3);
+      border: 1px solid rgba(255, 110, 220, 0.35);
       border-radius: 9999px;
       padding: 10px 24px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 24px rgba(204, 255, 0, 0.12);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 24px rgba(255, 60, 180, 0.2);
       z-index: 100;
       transition: opacity 0.3s ease;
     }
@@ -64,11 +61,10 @@
     }
 
     .btn {
-      background: #ccff00;
-      color: #08090e;
+      background: linear-gradient(135deg, #ff3399, #ffaa00);
+      color: #050208;
       font-weight: 800;
       font-size: 13px;
-      font-family: 'Space Grotesk', sans-serif;
       letter-spacing: 0.5px;
       border: none;
       border-radius: 9999px;
@@ -81,30 +77,30 @@
     }
 
     .btn:hover {
-      box-shadow: 0 0 20px rgba(204, 255, 0, 0.7);
+      box-shadow: 0 0 24px rgba(255, 110, 200, 0.8);
       transform: scale(1.04);
     }
 
     .slider {
       width: 300px;
-      accent-color: #ccff00;
+      accent-color: #ff3399;
       cursor: pointer;
     }
 
     .telemetry {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Consolas', 'Courier New', monospace;
       font-size: 13px;
-      color: #cbd5e1;
+      color: #fbcfe8;
       letter-spacing: 0.5px;
     }
 
     .badge {
       font-size: 11px;
       font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      color: #ccff00;
-      background: rgba(204, 255, 0, 0.12);
-      border: 1px solid rgba(204, 255, 0, 0.35);
+      font-family: 'Consolas', monospace;
+      color: #fed7aa;
+      background: rgba(255, 170, 0, 0.14);
+      border: 1px solid rgba(255, 170, 0, 0.4);
       padding: 3px 10px;
       border-radius: 9999px;
     }
@@ -131,8 +127,8 @@
     <input type="range" id="scrubber" class="slider" min="0" max="1" step="0.001" value="0">
     <div class="telemetry" id="timeInfo">0.00s / 8.00s</div>
     <div class="telemetry badge">FRAME: <span id="frameInfo">0</span> / 240</div>
-    <div class="badge" style="color: #a78bfa; border-color: rgba(167, 139, 250, 0.4); background: rgba(167, 139, 250, 0.12);">
-      GEN-Z MINIMAL TECH
+    <div class="badge" style="color: #f472b6; border-color: rgba(244, 114, 182, 0.4); background: rgba(244, 114, 182, 0.12);">
+      HYPNOTIC LIGHT BURST
     </div>
   </div>
 
@@ -143,7 +139,7 @@
     const CONFIG = {
       width: 1920,
       height: 1080,
-      duration: 8,        // 8 seconds (Between 5-10s requirement)
+      duration: 8,        // 8 seconds (Within 5-10s specification)
       fps: 30,            // 30 FPS
       totalFrames: 240    // 8s * 30fps = 240 frames
     };
@@ -154,398 +150,190 @@
     const cy = CONFIG.height / 2;
 
     // -------------------------------------------------------------
-    // Pre-calculated Geometry for Isometric Wireframe Cube
+    // Procedural Energy Rays Model
     // -------------------------------------------------------------
-    const cubeVertices = [
-      [-1, -1, -1], [ 1, -1, -1], [ 1,  1, -1], [-1,  1, -1],
-      [-1, -1,  1], [ 1, -1,  1], [ 1,  1,  1], [-1,  1,  1]
-    ];
-    const cubeEdges = [
-      [0,1], [1,2], [2,3], [3,0], // back face
-      [4,5], [5,6], [6,7], [7,4], // front face
-      [0,4], [1,5], [2,6], [3,7]  // connecting edges
-    ];
+    const NUM_RAYS = 72;
+    const rayProfiles = [];
+    for (let i = 0; i < NUM_RAYS; i++) {
+      const baseTheta = (i / NUM_RAYS) * Math.PI * 2;
+      rayProfiles.push({
+        index: i,
+        baseAngle: baseTheta,
+        baseLen: 620 + (i % 7) * 45 + ((i * 13) % 90),
+        width: 18 + (i % 5) * 8,
+        speedFactor: 1, // 1x full rotation per 8s
+        hueGroup: i % 4, // 0: Magenta/Pink, 1: Golden Amber, 2: Electric Cyan, 3: Deep Violet
+        harmonicPhase: (i * 3) % 11
+      });
+    }
 
-    // Floating dynamic particles
-    const DUST_COUNT = 45;
+    // Secondary Fine Filament Rays (Counter-rotating)
+    const NUM_FILAMENTS = 64;
+    const filamentProfiles = [];
+    for (let i = 0; i < NUM_FILAMENTS; i++) {
+      filamentProfiles.push({
+        baseAngle: (i / NUM_FILAMENTS) * Math.PI * 2,
+        baseLen: 750 + ((i * 17) % 160),
+        speedFactor: -1, // -1x counter rotation
+        colorType: i % 3
+      });
+    }
+
+    // Ambient Prismatic Light Dust Particles (Looping)
+    const DUST_COUNT = 90;
     const dustParticles = [];
     for (let i = 0; i < DUST_COUNT; i++) {
       dustParticles.push({
-        x: Math.random() * CONFIG.width,
-        baseY: Math.random() * CONFIG.height,
-        size: 1.5 + Math.random() * 2.5,
-        speed: 1 + Math.floor(Math.random() * 2), // 1 or 2 integer cycles
-        alpha: 0.2 + Math.random() * 0.4
+        baseDist: 80 + Math.random() * 680,
+        baseAngle: Math.random() * Math.PI * 2,
+        size: 1.5 + Math.random() * 3.5,
+        radialCycle: 1 + Math.floor(Math.random() * 2),
+        orbitCycle: (Math.random() > 0.5 ? 1 : -1) * (1 + Math.floor(Math.random() * 2)),
+        color: ['#ff3399', '#ffaa00', '#00f0ff', '#ffffff', '#c084fc'][Math.floor(Math.random() * 5)]
       });
     }
 
     // -------------------------------------------------------------
-    // Main Render Scene Function (100% Deterministic Seamless Loop)
+    // Main Render Routine (100% Deterministic Seamless Loop)
     // -------------------------------------------------------------
     function renderScene(progress) {
       const tau = Math.PI * 2;
       const angleProgress = progress * tau;
 
-      // 1. Deep Matte Dark Background
-      ctx.fillStyle = '#07080c';
+      // 1. Deep Velvet Dark Backdrop
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = '#020205';
       ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
 
-      // Subtle ambient radial glow (Acid lime & lavender gradient)
-      const glowGrad = ctx.createRadialGradient(cx, cy, 60, cx, cy, 720);
-      const pulseAura = 0.5 + 0.5 * Math.sin(angleProgress * 2);
-      glowGrad.addColorStop(0, `rgba(204, 255, 0, ${0.05 + 0.02 * pulseAura})`);
-      glowGrad.addColorStop(0.4, `rgba(167, 139, 250, ${0.04 + 0.02 * pulseAura})`);
-      glowGrad.addColorStop(0.8, 'rgba(8, 9, 14, 0.4)');
-      glowGrad.addColorStop(1, 'rgba(7, 8, 12, 0)');
-      ctx.fillStyle = glowGrad;
+      // 2. Ambient Deep Chromatic Vignette
+      const bgGlow = ctx.createRadialGradient(cx, cy, 30, cx, cy, 850);
+      const pulseBg = 0.5 + 0.5 * Math.sin(angleProgress * 2);
+      bgGlow.addColorStop(0, `rgba(180, 20, 100, ${0.18 + 0.05 * pulseBg})`);
+      bgGlow.addColorStop(0.35, `rgba(80, 10, 120, ${0.12 + 0.04 * pulseBg})`);
+      bgGlow.addColorStop(0.7, 'rgba(15, 5, 25, 0.5)');
+      bgGlow.addColorStop(1, 'rgba(2, 2, 5, 1)');
+      ctx.fillStyle = bgGlow;
       ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
 
-      // 2. Minimalist Dot Matrix Grid with Coordinate Crosshairs
-      drawDottedGrid(angleProgress);
+      // Switch to Additive Blending for Authentic Volumetric Light Burst
+      ctx.globalCompositeOperation = 'lighter';
 
-      // 3. Floating Dust / Ambient Micro-sparks (Seamless looping Y)
-      drawAmbientDust(progress);
+      // 3. Ambient Prismatic Optical Flow Rings (Blooming radial waves)
+      drawOpticalBloomRings(angleProgress);
 
-      // 4. Concentric Tech Orbit Rings
-      drawOrbitRings(angleProgress);
+      // 4. Primary Hypnotic Energy Rays (Volumetric Light Beams)
+      drawEnergyRays(angleProgress);
 
-      // 5. Central Sleek Glassmorphism Cyber Card
-      drawCentralCard(angleProgress, progress);
+      // 5. Counter-Rotating Fine Prismatic Filaments
+      drawPrismaticFilaments(angleProgress);
 
-      // 6. Gen-Z Floating Tech Badges / Pills (Spring Floating)
-      drawFloatingWidgets(angleProgress, progress);
+      // 6. Radiant Floating Light Dust & Prismatic Motes
+      drawPrismaticDust(angleProgress);
 
-      // 7. Minimalist Safe-Zone Framing & Monospace Telemetry
-      drawMinimalFraming(progress);
+      // 7. Blinding Central Plasma Iris & Anamorphic Starburst
+      drawCentralLightBurst(angleProgress);
+
+      // 8. Subtle Chromatic Edge Dispersion & Lens Flares
+      drawLensFlares(angleProgress);
+
+      // Reset composite operation for UI framing
+      ctx.globalCompositeOperation = 'source-over';
     }
 
     // -------------------------------------------------------------
-    // Dotted Matrix Grid
+    // Optical Bloom Rings (Pulsing expanding waves)
     // -------------------------------------------------------------
-    function drawDottedGrid(angleProgress) {
+    function drawOpticalBloomRings(angleProgress) {
       ctx.save();
-      const spacing = 48;
-      const dotRadius = 1;
-      
-      // Calculate grid bounds
-      const startX = 96;
-      const endX = CONFIG.width - 96;
-      const startY = 96;
-      const endY = CONFIG.height - 96;
+      const numRings = 5;
+      for (let r = 0; r < numRings; r++) {
+        // Continuous wave loop from center outward
+        const phase = (angleProgress * 2 + (r / numRings) * Math.PI * 2) % (Math.PI * 2);
+        const norm = phase / (Math.PI * 2);
+        const radius = 60 + norm * 520;
+        const alpha = Math.sin(norm * Math.PI) * 0.16;
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
-      for (let x = startX; x <= endX; x += spacing) {
-        for (let y = startY; y <= endY; y += spacing) {
-          ctx.beginPath();
-          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
-          ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.lineWidth = 14 + norm * 26;
+        
+        if (r % 2 === 0) {
+          ctx.strokeStyle = `rgba(255, 60, 160, ${alpha})`;
+        } else {
+          ctx.strokeStyle = `rgba(255, 170, 0, ${alpha * 0.8})`;
         }
-      }
-
-      // 4 Micro Plus Crosshairs (+)
-      const crosshairs = [
-        { x: 192, y: 192 },
-        { x: CONFIG.width - 192, y: 192 },
-        { x: 192, y: CONFIG.height - 192 },
-        { x: CONFIG.width - 192, y: CONFIG.height - 192 }
-      ];
-
-      ctx.lineWidth = 1.2;
-      ctx.strokeStyle = 'rgba(204, 255, 0, 0.35)';
-      crosshairs.forEach(pt => {
-        const len = 7;
-        ctx.beginPath();
-        ctx.moveTo(pt.x - len, pt.y);
-        ctx.lineTo(pt.x + len, pt.y);
-        ctx.moveTo(pt.x, pt.y - len);
-        ctx.lineTo(pt.x, pt.y + len);
         ctx.stroke();
-      });
-
+      }
       ctx.restore();
     }
 
     // -------------------------------------------------------------
-    // Ambient Dust Particles
+    // Volumetric Energy Rays (Core Hypnotic Light Burst)
     // -------------------------------------------------------------
-    function drawAmbientDust(progress) {
-      ctx.save();
-      dustParticles.forEach(p => {
-        // Continuous upward drift with modulo wrap
-        const drift = (progress * p.speed) % 1;
-        let y = p.baseY - drift * 300;
-        if (y < 0) y += CONFIG.height;
-
-        ctx.fillStyle = `rgba(204, 255, 0, ${p.alpha})`;
-        ctx.beginPath();
-        ctx.arc(p.x, y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      ctx.restore();
-    }
-
-    // -------------------------------------------------------------
-    // Minimalist Orbit Rings
-    // -------------------------------------------------------------
-    function drawOrbitRings(angleProgress) {
+    function drawEnergyRays(angleProgress) {
       ctx.save();
       ctx.translate(cx, cy);
 
-      // Ring 1: Thin Outer Circular Boundary
-      const rOuter = 410;
-      ctx.beginPath();
-      ctx.arc(0, 0, rOuter, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
+      for (let i = 0; i < NUM_RAYS; i++) {
+        const ray = rayProfiles[i];
+        
+        // Exact integer loop rotations
+        // Main rotation: 1x full turn around center
+        const currentAngle = ray.baseAngle + angleProgress * ray.speedFactor;
+        
+        // Harmonic undulating wave modulation for organic rhythm
+        const wave = Math.sin(currentAngle * 4 + angleProgress * 2 + ray.harmonicPhase);
+        const len = ray.baseLen + wave * 90;
+        const spreadAngle = (ray.width / len) * (1 + 0.25 * Math.sin(angleProgress * 4 + i));
 
-      // Ring 2: Rotating Dashed Acid Lime Ring (1x full rotation)
-      ctx.save();
-      ctx.rotate(angleProgress);
-      ctx.beginPath();
-      ctx.arc(0, 0, rOuter - 24, 0, Math.PI * 2);
-      ctx.setLineDash([6, 18, 28, 18]);
-      ctx.strokeStyle = 'rgba(204, 255, 0, 0.3)';
-      ctx.lineWidth = 1.6;
-      ctx.stroke();
+        // Coordinate endpoints of triangular/fan ray
+        const theta1 = currentAngle - spreadAngle;
+        const theta2 = currentAngle + spreadAngle;
 
-      // Satellite Orbiter
-      ctx.beginPath();
-      ctx.arc(rOuter - 24, 0, 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#ccff00';
-      ctx.shadowColor = '#ccff00';
-      ctx.shadowBlur = 12;
-      ctx.fill();
-      ctx.restore();
+        const x1 = Math.cos(theta1) * len;
+        const y1 = Math.sin(theta1) * len;
+        const x2 = Math.cos(theta2) * len;
+        const y2 = Math.sin(theta2) * len;
 
-      // Ring 3: Counter-rotating Lavender Segment (-1x full rotation)
-      ctx.save();
-      ctx.rotate(-angleProgress);
-      ctx.beginPath();
-      ctx.arc(0, 0, rOuter - 48, 0, Math.PI * 0.7);
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.45)';
-      ctx.lineWidth = 2.2;
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(0, 0, rOuter - 48, Math.PI, Math.PI * 1.5);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.restore();
-    }
-
-    // -------------------------------------------------------------
-    // Central Glassmorphic Cyber Card
-    // -------------------------------------------------------------
-    function drawCentralCard(angleProgress, progress) {
-      ctx.save();
-      
-      // Floating card levitation (Seamless sine wave)
-      const floatY = Math.sin(angleProgress * 2) * 10;
-      const cardW = 540;
-      const cardH = 340;
-      const cardX = cx - cardW / 2;
-      const cardY = cy - cardH / 2 + floatY;
-      const cornerR = 24;
-
-      // Card Backdrop Glow
-      ctx.shadowColor = 'rgba(204, 255, 0, 0.15)';
-      ctx.shadowBlur = 40;
-
-      // Card Glass Surface
-      ctx.fillStyle = 'rgba(14, 18, 28, 0.72)';
-      roundRect(ctx, cardX, cardY, cardW, cardH, cornerR);
-      ctx.fill();
-      ctx.shadowBlur = 0; // reset
-
-      // Dual-gradient Border (Acid lime to Lavender)
-      const borderGrad = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY + cardH);
-      borderGrad.addColorStop(0, 'rgba(204, 255, 0, 0.65)');
-      borderGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.15)');
-      borderGrad.addColorStop(1, 'rgba(167, 139, 250, 0.55)');
-      ctx.strokeStyle = borderGrad;
-      ctx.lineWidth = 1.6;
-      roundRect(ctx, cardX, cardY, cardW, cardH, cornerR);
-      ctx.stroke();
-
-      // Card Header: Micro Status Bar
-      const headerY = cardY + 36;
-      
-      // Status Indicator Dot (Pulsing green)
-      const pulseGreen = 0.6 + 0.4 * Math.sin(angleProgress * 4);
-      ctx.fillStyle = `rgba(204, 255, 0, ${pulseGreen})`;
-      ctx.beginPath();
-      ctx.arc(cardX + 36, headerY, 4.5, 0, Math.PI * 2);
-      ctx.shadowColor = '#ccff00';
-      ctx.shadowBlur = 10;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Header Text
-      ctx.fillStyle = '#f8fafc';
-      ctx.font = '700 13px "Space Grotesk", sans-serif';
-      ctx.fillText('NEURAL_ENGINE // v2.4', cardX + 52, headerY + 4);
-
-      // Mini Pill Tag (Right side of header)
-      const pillW = 86;
-      const pillH = 22;
-      const pillX = cardX + cardW - pillW - 32;
-      const pillY = headerY - 12;
-      ctx.fillStyle = 'rgba(204, 255, 0, 0.1)';
-      ctx.strokeStyle = 'rgba(204, 255, 0, 0.3)';
-      ctx.lineWidth = 1;
-      roundRect(ctx, pillX, pillY, pillW, pillH, 999);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#ccff00';
-      ctx.font = '700 10px "JetBrains Mono", monospace';
-      ctx.fillText('● ACTIVE', pillX + 16, pillY + 15);
-
-      // Card Divider Line
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cardX + 32, headerY + 22);
-      ctx.lineTo(cardX + cardW - 32, headerY + 22);
-      ctx.stroke();
-
-      // -------------------------------------------------------------
-      // Inside Card: 3D Rotating Isometric Wireframe Cube
-      // -------------------------------------------------------------
-      const cubeCenterX = cardX + 140;
-      const cubeCenterY = cardY + 195;
-      drawRotatingCube(cubeCenterX, cubeCenterY, angleProgress);
-
-      // -------------------------------------------------------------
-      // Inside Card Right: Live Looping Audio / Rhythm Equalizer
-      // -------------------------------------------------------------
-      const eqX = cardX + 265;
-      const eqY = cardY + 195;
-      drawLiveEqualizer(eqX, eqY, angleProgress);
-
-      // Card Footer Stats
-      ctx.fillStyle = 'rgba(203, 213, 225, 0.6)';
-      ctx.font = '500 11px "JetBrains Mono", monospace';
-      ctx.fillText('CORE FREQ: 4.80 GHz', cardX + 36, cardY + cardH - 24);
-      
-      const pct = Math.floor(progress * 100);
-      ctx.fillStyle = '#a78bfa';
-      ctx.fillText(`BUFFER: ${pct}% SYNC`, cardX + cardW - 148, cardY + cardH - 24);
-
-      ctx.restore();
-    }
-
-    // Helper: Rounded Rectangle Path
-    function roundRect(ctx, x, y, w, h, r) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.arcTo(x + w, y, x + w, y + r, r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-      ctx.lineTo(x + r, y + h);
-      ctx.arcTo(x, y + h, x, y + h - r, r);
-      ctx.lineTo(x, y + r);
-      ctx.arcTo(x, y, x + r, y, r);
-      ctx.closePath();
-    }
-
-    // -------------------------------------------------------------
-    // 3D Rotating Isometric Cube (Looping 1x full turn around Y & X)
-    // -------------------------------------------------------------
-    function drawRotatingCube(xCenter, yCenter, angleProgress) {
-      ctx.save();
-      const size = 52;
-      const rotY = angleProgress * 1;
-      const rotX = angleProgress * 1;
-      const rotZ = 0.45;
-
-      const projected = cubeVertices.map(v => {
-        let x = v[0] * size;
-        let y = v[1] * size;
-        let z = v[2] * size;
-
-        // Rotate Y
-        let x1 = x * Math.cos(rotY) + z * Math.sin(rotY);
-        let z1 = -x * Math.sin(rotY) + z * Math.cos(rotY);
-        // Rotate X
-        let y2 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
-        let z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
-        // Rotate Z
-        let x3 = x1 * Math.cos(rotZ) - y2 * Math.sin(rotZ);
-        let y3 = x1 * Math.sin(rotZ) + y2 * Math.cos(rotZ);
-
-        const fov = 400;
-        const scale = fov / (fov + z2 + 200);
-        return {
-          x: xCenter + x3 * scale,
-          y: yCenter + y3 * scale,
-          z: z2
-        };
-      });
-
-      // Draw Edges
-      ctx.lineWidth = 1.8;
-      cubeEdges.forEach(([i, j]) => {
-        const p1 = projected[i];
-        const p2 = projected[j];
-        const avgZ = (p1.z + p2.z) / 2;
-        const alpha = Math.max(0.25, Math.min(1.0, 0.65 + avgZ / 120));
-
-        ctx.strokeStyle = `rgba(204, 255, 0, ${alpha})`;
-        ctx.shadowColor = '#ccff00';
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.stroke();
-      });
-
-      // Draw Nodes
-      projected.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowColor = '#ccff00';
-        ctx.shadowBlur = 10;
-        ctx.fill();
-      });
-
-      ctx.restore();
-    }
-
-    // -------------------------------------------------------------
-    // Looping Audio/Rhythm Equalizer
-    // -------------------------------------------------------------
-    function drawLiveEqualizer(startX, centerY, angleProgress) {
-      ctx.save();
-      const numBars = 14;
-      const barW = 8;
-      const gap = 8;
-      const maxH = 65;
-
-      for (let i = 0; i < numBars; i++) {
-        // Integer harmonic wave ensures seamless loop
-        const phase = (i / numBars) * Math.PI * 2;
-        const wave = Math.sin(phase * 2 + angleProgress * 2) * 0.4 +
-                     Math.cos(phase * 3 - angleProgress * 3) * 0.3 + 0.3;
-        const h = Math.max(8, wave * maxH);
-
-        const bx = startX + i * (barW + gap);
-        const by = centerY - h / 2;
-
-        const grad = ctx.createLinearGradient(bx, by, bx, by + h);
-        grad.addColorStop(0, '#ccff00');
-        grad.addColorStop(1, '#a78bfa');
+        // Dynamic multi-stop radial gradient for rich color dispersion
+        const grad = ctx.createRadialGradient(0, 0, 20, 0, 0, len);
+        
+        if (ray.hueGroup === 0) {
+          // Vibrant Hot Pink / Magenta into Warm Amber
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+          grad.addColorStop(0.15, 'rgba(255, 50, 150, 0.65)');
+          grad.addColorStop(0.5, 'rgba(255, 110, 60, 0.35)');
+          grad.addColorStop(0.85, 'rgba(180, 0, 90, 0.15)');
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        } else if (ray.hueGroup === 1) {
+          // Golden Amber / Neon Tangerine into Crimson
+          grad.addColorStop(0, 'rgba(255, 255, 240, 0.9)');
+          grad.addColorStop(0.2, 'rgba(255, 180, 20, 0.6)');
+          grad.addColorStop(0.55, 'rgba(255, 80, 20, 0.3)');
+          grad.addColorStop(0.85, 'rgba(140, 10, 50, 0.1)');
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        } else if (ray.hueGroup === 2) {
+          // Electric Cyan / Turquoise into Deep Indigo
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+          grad.addColorStop(0.18, 'rgba(0, 240, 255, 0.55)');
+          grad.addColorStop(0.5, 'rgba(99, 102, 241, 0.3)');
+          grad.addColorStop(0.85, 'rgba(50, 0, 120, 0.12)');
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        } else {
+          // Deep Violet / Ultraviolet into Magenta
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+          grad.addColorStop(0.2, 'rgba(192, 132, 252, 0.55)');
+          grad.addColorStop(0.55, 'rgba(236, 72, 153, 0.3)');
+          grad.addColorStop(0.85, 'rgba(80, 0, 100, 0.1)');
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        }
 
         ctx.fillStyle = grad;
-        ctx.shadowColor = '#ccff00';
-        ctx.shadowBlur = 6;
-        roundRect(ctx, bx, by, barW, h, 4);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.closePath();
         ctx.fill();
       }
 
@@ -553,142 +341,169 @@
     }
 
     // -------------------------------------------------------------
-    // Gen-Z Floating Tech Badges / Pills
+    // Prismatic Fine Filaments (Counter-Rotating Hairline Rays)
     // -------------------------------------------------------------
-    function drawFloatingWidgets(angleProgress, progress) {
+    function drawPrismaticFilaments(angleProgress) {
       ctx.save();
+      ctx.translate(cx, cy);
 
-      // Badge 1: Top-Right (⚡ ULTRA_LOW_LATENCY)
-      const b1Y = 280 + Math.sin(angleProgress * 2) * 12;
-      drawBadge(1280, b1Y, '⚡ ULTRA_LOW_LATENCY', '99.98% OK', '#ccff00');
+      for (let j = 0; j < NUM_FILAMENTS; j++) {
+        const fil = filamentProfiles[j];
+        // Counter rotation: -1x full cycle
+        const curAngle = fil.baseAngle + angleProgress * fil.speedFactor;
+        const wave = Math.sin(curAngle * 6 - angleProgress * 3);
+        const len = fil.baseLen + wave * 70;
 
-      // Badge 2: Bottom-Left (✦ AI_PIPELINE)
-      const b2Y = 720 + Math.cos(angleProgress * 2) * 12;
-      drawBadge(380, b2Y, '✦ AI_PIPELINE', 'SYNCED', '#a78bfa');
+        const endX = Math.cos(curAngle) * len;
+        const endY = Math.sin(curAngle) * len;
 
-      // Badge 3: Top-Left Minimal Chip (⌘ CMD+K)
-      const b3Y = 320 + Math.sin(angleProgress * 2 + 1.2) * 10;
-      drawBadge(420, b3Y, '⌘ RAPID_DISPATCH', 'READY', '#38bdf8');
+        ctx.lineWidth = 1.4;
+        const grad = ctx.createLinearGradient(0, 0, endX, endY);
+        if (fil.colorType === 0) {
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+          grad.addColorStop(0.4, 'rgba(255, 60, 180, 0.45)');
+          grad.addColorStop(1, 'rgba(255, 60, 180, 0)');
+        } else if (fil.colorType === 1) {
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+          grad.addColorStop(0.4, 'rgba(255, 200, 40, 0.4)');
+          grad.addColorStop(1, 'rgba(255, 200, 40, 0)');
+        } else {
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+          grad.addColorStop(0.4, 'rgba(0, 240, 255, 0.35)');
+          grad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+        }
 
-      // Badge 4: Bottom-Right Dial Pill
-      const b4Y = 690 + Math.sin(angleProgress * 2 + 2.5) * 11;
-      drawBadge(1220, b4Y, '◎ FRAME_RATE', '30.0 FPS', '#f43f5e');
-
-      ctx.restore();
-    }
-
-    // Helper: Draw Glassmorphic Pill Badge
-    function drawBadge(x, y, title, subtitle, accentColor) {
-      ctx.save();
-      const bw = 210;
-      const bh = 54;
-      const br = 16;
-
-      ctx.fillStyle = 'rgba(15, 20, 32, 0.82)';
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-      ctx.shadowBlur = 18;
-      roundRect(ctx, x, y, bw, bh, br);
-      ctx.fill();
-
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-      ctx.lineWidth = 1.2;
-      roundRect(ctx, x, y, bw, bh, br);
-      ctx.stroke();
-
-      // Accent Dot
-      ctx.fillStyle = accentColor;
-      ctx.shadowColor = accentColor;
-      ctx.shadowBlur = 8;
-      ctx.beginPath();
-      ctx.arc(x + 22, y + bh / 2, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Texts
-      ctx.fillStyle = '#f8fafc';
-      ctx.font = '700 12px "Space Grotesk", sans-serif';
-      ctx.fillText(title, x + 38, y + 24);
-
-      ctx.fillStyle = accentColor;
-      ctx.font = '700 11px "JetBrains Mono", monospace';
-      ctx.fillText(subtitle, x + 38, y + 42);
+        ctx.strokeStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+      }
 
       ctx.restore();
     }
 
     // -------------------------------------------------------------
-    // Minimalist Safe-Zone Framing & Typography
+    // Radiant Floating Light Dust & Prismatic Motes
     // -------------------------------------------------------------
-    function drawMinimalFraming(progress) {
+    function drawPrismaticDust(angleProgress) {
       ctx.save();
-      const pad = 56;
-      const arm = 28;
+      ctx.translate(cx, cy);
 
-      // Safe-zone subtle corner markers
-      ctx.strokeStyle = 'rgba(204, 255, 0, 0.4)';
-      ctx.lineWidth = 1.6;
+      for (let i = 0; i < DUST_COUNT; i++) {
+        const d = dustParticles[i];
+        
+        // Exact integer loop orbits & radial oscillation
+        const curAngle = d.baseAngle + angleProgress * d.orbitCycle;
+        const curDist = d.baseDist + Math.sin(angleProgress * d.radialCycle * 2 + d.baseAngle) * 45;
 
-      // Top-Left
+        const px = Math.cos(curAngle) * curDist;
+        const py = Math.sin(curAngle) * curDist;
+
+        const pulse = 0.5 + 0.5 * Math.sin(angleProgress * 4 + i);
+        const alpha = 0.3 + 0.5 * pulse;
+
+        ctx.beginPath();
+        ctx.arc(px, py, d.size * (0.8 + 0.4 * pulse), 0, Math.PI * 2);
+        ctx.fillStyle = d.color;
+        ctx.shadowColor = d.color;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // Blinding Central Light Burst & Star Flare Core
+    // -------------------------------------------------------------
+    function drawCentralLightBurst(angleProgress) {
+      ctx.save();
+      const pulse = Math.sin(angleProgress * 4) * 0.5 + 0.5;
+
+      // 1. Broad Radiant Aura Bloom
+      const coreR = 120 + pulse * 28;
+      const coreGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, coreR * 2.2);
+      coreGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      coreGrad.addColorStop(0.15, 'rgba(255, 240, 160, 0.95)');
+      coreGrad.addColorStop(0.35, 'rgba(255, 60, 150, 0.7)');
+      coreGrad.addColorStop(0.65, 'rgba(168, 85, 247, 0.3)');
+      coreGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.fillStyle = coreGrad;
       ctx.beginPath();
-      ctx.moveTo(pad, pad + arm);
-      ctx.lineTo(pad, pad);
-      ctx.lineTo(pad + arm, pad);
-      ctx.stroke();
+      ctx.arc(cx, cy, coreR * 2.2, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Top-Right
+      // 2. Pure White Radiant Hot Core
       ctx.beginPath();
-      ctx.moveTo(CONFIG.width - pad - arm, pad);
-      ctx.lineTo(CONFIG.width - pad, pad);
-      ctx.lineTo(CONFIG.width - pad, pad + arm);
-      ctx.stroke();
+      ctx.arc(cx, cy, 32 + pulse * 10, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#ffffff';
+      ctx.shadowBlur = 40;
+      ctx.fill();
 
-      // Bottom-Left
-      ctx.beginPath();
-      ctx.moveTo(pad, CONFIG.height - pad - arm);
-      ctx.lineTo(pad, CONFIG.height - pad);
-      ctx.lineTo(pad + arm, CONFIG.height - pad);
-      ctx.stroke();
+      // 3. Multi-point Starburst Spikes
+      const spikeCount = 12;
+      const spikeRot = angleProgress * 0.5; // slow smooth rotation
+      for (let s = 0; s < spikeCount; s++) {
+        const theta = spikeRot + (s / spikeCount) * Math.PI * 2;
+        const isMajor = s % 3 === 0;
+        const len = isMajor ? 280 + pulse * 80 : 160 + pulse * 40;
+        const w = isMajor ? 5 : 2.5;
 
-      // Bottom-Right
-      ctx.beginPath();
-      ctx.moveTo(CONFIG.width - pad - arm, CONFIG.height - pad);
-      ctx.lineTo(CONFIG.width - pad, CONFIG.height - pad);
-      ctx.lineTo(CONFIG.width - pad, CONFIG.height - pad - arm);
-      ctx.stroke();
+        const x = cx + Math.cos(theta) * len;
+        const y = cy + Math.sin(theta) * len;
 
-      // Top Left Metadata
-      ctx.fillStyle = '#f8fafc';
-      ctx.font = '700 13px "Space Grotesk", sans-serif';
-      ctx.letterSpacing = '1px';
-      ctx.fillText('MOTION STUDIO // TECH.GEN_Z', pad + 14, pad + 18);
+        const grad = ctx.createLinearGradient(cx, cy, x, y);
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.4, 'rgba(255, 140, 0, 0.8)');
+        grad.addColorStop(1, 'rgba(255, 0, 128, 0)');
 
-      ctx.fillStyle = '#a1a1aa';
-      ctx.font = '500 11px "JetBrains Mono", monospace';
-      ctx.fillText('ASSET ID: #STK-8092 // FHD 1080p', pad + 14, pad + 36);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = w;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
 
-      // Top Right Frame & Time
-      const frameNow = Math.floor(progress * (CONFIG.totalFrames - 1));
-      ctx.fillStyle = '#ccff00';
-      ctx.font = '700 12px "JetBrains Mono", monospace';
-      ctx.fillText(`FRAME ${String(frameNow).padStart(3, '0')} / ${CONFIG.totalFrames}`, CONFIG.width - pad - 160, pad + 18);
+      ctx.restore();
+    }
 
-      ctx.fillStyle = '#a1a1aa';
-      ctx.font = '500 11px "JetBrains Mono", monospace';
-      ctx.fillText(`TIME ${(progress * CONFIG.duration).toFixed(2)}s / ${CONFIG.duration}.00s`, CONFIG.width - pad - 160, pad + 36);
+    // -------------------------------------------------------------
+    // Horizontal Anamorphic Flare & Prismatic Rings
+    // -------------------------------------------------------------
+    function drawLensFlares(angleProgress) {
+      ctx.save();
+      const pulse = Math.sin(angleProgress * 2) * 0.5 + 0.5;
 
-      // Bottom Center Loop Progress
-      const barW = 200;
-      const barH = 2.5;
-      const barX = cx - barW / 2;
-      const barY = CONFIG.height - pad - 10;
+      // Horizontal Cinema Anamorphic Beam across full width
+      const beamH = 5 + pulse * 3;
+      const flareGrad = ctx.createLinearGradient(0, cy, CONFIG.width, cy);
+      flareGrad.addColorStop(0, 'rgba(255, 50, 150, 0)');
+      flareGrad.addColorStop(0.3, 'rgba(255, 100, 200, 0.25)');
+      flareGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.95)');
+      flareGrad.addColorStop(0.7, 'rgba(0, 220, 255, 0.25)');
+      flareGrad.addColorStop(1, 'rgba(0, 220, 255, 0)');
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-      ctx.fillRect(barX, barY, barW, barH);
+      ctx.fillStyle = flareGrad;
+      ctx.fillRect(0, cy - beamH / 2, CONFIG.width, beamH);
 
-      ctx.fillStyle = '#ccff00';
-      ctx.shadowColor = '#ccff00';
-      ctx.shadowBlur = 6;
-      ctx.fillRect(barX, barY, barW * progress, barH);
+      // Thin Intense Core Line
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(cx - 380, cy - 1, 760, 2);
+
+      // Chromatic Optical Flare Rings
+      const ringRadii = [80, 170, 310, 480];
+      ringRadii.forEach((r, idx) => {
+        const ringPulse = Math.sin(angleProgress * 2 + idx) * 12;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + ringPulse, 0, Math.PI * 2);
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = idx % 2 === 0 ? 'rgba(255, 60, 180, 0.25)' : 'rgba(255, 170, 0, 0.2)';
+        ctx.stroke();
+      });
 
       ctx.restore();
     }

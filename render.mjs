@@ -18,7 +18,7 @@ const CONFIG = {
   totalFrames: 240,             // 30 fps * 8s = 240 frames
   framesDir: path.join(__dirname, 'frames'),
   outputDir: path.join(__dirname, 'output'),
-  outputFile: path.join(__dirname, 'output', 'minimal_tech_genz_1080p_30fps.mp4'),
+  outputFile: path.join(__dirname, 'output', 'hypnotic_light_burst_1080p_30fps.mp4'),
   crf: 18,                      // Visually lossless quality for stock footage
   preset: 'fast'
 };
