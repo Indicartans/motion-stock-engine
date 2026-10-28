@@ -14,11 +14,11 @@ const CONFIG = {
   width: 1920,
   height: 1080,
   fps: 30,
-  duration: 10,                 // 10 seconds (Adobe Stock range: 5 - 15s)
-  totalFrames: 300,             // 30 fps * 10s = 300 frames
+  duration: 8,                  // 8 seconds (Matching 5 - 10s requirement)
+  totalFrames: 240,             // 30 fps * 8s = 240 frames
   framesDir: path.join(__dirname, 'frames'),
   outputDir: path.join(__dirname, 'output'),
-  outputFile: path.join(__dirname, 'output', 'quantum_nexus_1080p_30fps.mp4'),
+  outputFile: path.join(__dirname, 'output', 'minimal_tech_genz_1080p_30fps.mp4'),
   crf: 18,                      // Visually lossless quality for stock footage
   preset: 'fast'
 };

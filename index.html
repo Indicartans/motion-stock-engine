@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
-  <title>Cyber Quantum Nexus - Motion Stock Asset</title>
+  <title>Minimal Tech Gen-Z Motion - Adobe Stock Asset</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -13,9 +16,9 @@
     }
 
     body {
-      background-color: #030712;
-      color: #f3f4f6;
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background-color: #07080c;
+      color: #f8fafc;
+      font-family: 'Space Grotesk', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       overflow: hidden;
       width: 1920px;
       height: 1080px;
@@ -28,7 +31,7 @@
       left: 0;
       width: 1920px;
       height: 1080px;
-      background: radial-gradient(circle at 50% 50%, #0a1128 0%, #040817 50%, #01030a 100%);
+      background: radial-gradient(circle at 50% 50%, #0e111a 0%, #08090e 60%, #040508 100%);
     }
 
     canvas {
@@ -40,18 +43,18 @@
     /* Preview controls overlay (Visible only in normal browser preview, auto-hidden in render mode) */
     #preview-controls {
       position: absolute;
-      bottom: 24px;
+      bottom: 28px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       align-items: center;
       gap: 16px;
-      background: rgba(10, 17, 40, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(0, 240, 255, 0.25);
+      background: rgba(14, 17, 26, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(204, 255, 0, 0.3);
       border-radius: 9999px;
       padding: 10px 24px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.15);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 24px rgba(204, 255, 0, 0.12);
       z-index: 100;
       transition: opacity 0.3s ease;
     }
@@ -61,47 +64,49 @@
     }
 
     .btn {
-      background: linear-gradient(135deg, #00f0ff, #0077ff);
-      color: #030712;
-      font-weight: 700;
+      background: #ccff00;
+      color: #08090e;
+      font-weight: 800;
       font-size: 13px;
+      font-family: 'Space Grotesk', sans-serif;
       letter-spacing: 0.5px;
       border: none;
       border-radius: 9999px;
-      padding: 6px 16px;
+      padding: 7px 18px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .btn:hover {
-      box-shadow: 0 0 16px rgba(0, 240, 255, 0.6);
+      box-shadow: 0 0 20px rgba(204, 255, 0, 0.7);
       transform: scale(1.04);
     }
 
     .slider {
-      width: 320px;
-      accent-color: #00f0ff;
+      width: 300px;
+      accent-color: #ccff00;
       cursor: pointer;
     }
 
     .telemetry {
-      font-family: 'Consolas', 'Courier New', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
-      color: #38bdf8;
-      letter-spacing: 1px;
+      color: #cbd5e1;
+      letter-spacing: 0.5px;
     }
 
     .badge {
       font-size: 11px;
-      font-weight: 600;
-      color: #a5f3fc;
-      background: rgba(0, 240, 255, 0.12);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      padding: 2px 8px;
-      border-radius: 4px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: #ccff00;
+      background: rgba(204, 255, 0, 0.12);
+      border: 1px solid rgba(204, 255, 0, 0.35);
+      padding: 3px 10px;
+      border-radius: 9999px;
     }
   </style>
 
@@ -124,19 +129,23 @@
       <span id="playIcon">⏸</span> <span id="playText">PAUSE</span>
     </button>
     <input type="range" id="scrubber" class="slider" min="0" max="1" step="0.001" value="0">
-    <div class="telemetry" id="timeInfo">0.00s / 10.00s</div>
-    <div class="telemetry badge">FRAME: <span id="frameInfo">0</span> / 300</div>
-    <div class="badge" style="color: #4ade80; border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.1);">1080p 30FPS LOOP</div>
+    <div class="telemetry" id="timeInfo">0.00s / 8.00s</div>
+    <div class="telemetry badge">FRAME: <span id="frameInfo">0</span> / 240</div>
+    <div class="badge" style="color: #a78bfa; border-color: rgba(167, 139, 250, 0.4); background: rgba(167, 139, 250, 0.12);">
+      GEN-Z MINIMAL TECH
+    </div>
   </div>
 
   <script>
-    // Configuration constants (Matching rules.md specifications)
+    // -------------------------------------------------------------
+    // Configuration (Matching rules.md: 1080p, 30fps, 8s loop)
+    // -------------------------------------------------------------
     const CONFIG = {
       width: 1920,
       height: 1080,
-      duration: 10,       // Duration in seconds (Between 5 - 15s)
-      fps: 30,            // Minimum 30 fps
-      totalFrames: 300    // 10s * 30fps = 300 frames
+      duration: 8,        // 8 seconds (Between 5-10s requirement)
+      fps: 30,            // 30 FPS
+      totalFrames: 240    // 8s * 30fps = 240 frames
     };
 
     const canvas = document.getElementById('motionCanvas');
@@ -145,338 +154,320 @@
     const cy = CONFIG.height / 2;
 
     // -------------------------------------------------------------
-    // 3D Geometry Helpers (Icosahedron & Geodesic Quantum Core)
+    // Pre-calculated Geometry for Isometric Wireframe Cube
     // -------------------------------------------------------------
-    const phi = (1 + Math.sqrt(5)) / 2;
-    const rawVertices = [
-      [-1,  phi, 0], [ 1,  phi, 0], [-1, -phi, 0], [ 1, -phi, 0],
-      [ 0, -1,  phi], [ 0,  1,  phi], [ 0, -1, -phi], [ 0,  1, -phi],
-      [ phi, 0, -1], [ phi, 0,  1], [-phi, 0, -1], [-phi, 0,  1]
+    const cubeVertices = [
+      [-1, -1, -1], [ 1, -1, -1], [ 1,  1, -1], [-1,  1, -1],
+      [-1, -1,  1], [ 1, -1,  1], [ 1,  1,  1], [-1,  1,  1]
+    ];
+    const cubeEdges = [
+      [0,1], [1,2], [2,3], [3,0], // back face
+      [4,5], [5,6], [6,7], [7,4], // front face
+      [0,4], [1,5], [2,6], [3,7]  // connecting edges
     ];
 
-    // Normalize to unit sphere
-    const icosaVertices = rawVertices.map(v => {
-      const len = Math.hypot(v[0], v[1], v[2]);
-      return [v[0] / len, v[1] / len, v[2] / len];
-    });
-
-    const icosaEdges = [];
-    for (let i = 0; i < icosaVertices.length; i++) {
-      for (let j = i + 1; j < icosaVertices.length; j++) {
-        const d = Math.hypot(
-          icosaVertices[i][0] - icosaVertices[j][0],
-          icosaVertices[i][1] - icosaVertices[j][1],
-          icosaVertices[i][2] - icosaVertices[j][2]
-        );
-        if (Math.abs(d - 1.051) < 0.1) {
-          icosaEdges.push([i, j]);
-        }
-      }
-    }
-
-    // -------------------------------------------------------------
-    // Ambient Particle System (Deterministic Seamless Drift)
-    // -------------------------------------------------------------
-    const NUM_PARTICLES = 160;
-    const particles = [];
-    for (let i = 0; i < NUM_PARTICLES; i++) {
-      particles.push({
-        baseAngle: (i / NUM_PARTICLES) * Math.PI * 2,
-        baseDist: 140 + Math.random() * 640,
-        radialSpeed: (Math.random() > 0.5 ? 1 : -1) * (1 + Math.floor(Math.random() * 2)),
-        zBase: (Math.random() - 0.5) * 600,
-        size: 1.2 + Math.random() * 2.8,
-        colorType: Math.random() > 0.4 ? 'cyan' : (Math.random() > 0.5 ? 'violet' : 'emerald'),
-        glow: Math.random() * 12 + 6,
-        orbitTilt: (Math.random() - 0.5) * 0.8
+    // Floating dynamic particles
+    const DUST_COUNT = 45;
+    const dustParticles = [];
+    for (let i = 0; i < DUST_COUNT; i++) {
+      dustParticles.push({
+        x: Math.random() * CONFIG.width,
+        baseY: Math.random() * CONFIG.height,
+        size: 1.5 + Math.random() * 2.5,
+        speed: 1 + Math.floor(Math.random() * 2), // 1 or 2 integer cycles
+        alpha: 0.2 + Math.random() * 0.4
       });
     }
 
-    // Energy wave rings (Outer HUD)
-    const WAVE_POINTS = 120;
-
     // -------------------------------------------------------------
-    // Core Draw Routine (Deterministic based on progress: 0.0 -> 1.0)
+    // Main Render Scene Function (100% Deterministic Seamless Loop)
     // -------------------------------------------------------------
     function renderScene(progress) {
-      // Loop phase: 0.0 to 1.0 translates to 0 to 2*PI seamlessly
       const tau = Math.PI * 2;
       const angleProgress = progress * tau;
 
-      // 1. Clear background
-      ctx.fillStyle = '#02050e';
+      // 1. Deep Matte Dark Background
+      ctx.fillStyle = '#07080c';
       ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
 
-      // 2. Ambient Deep Radiant Glows
-      const bgGlow1 = ctx.createRadialGradient(cx, cy, 50, cx, cy, 750);
-      const pulse1 = 0.5 + 0.5 * Math.sin(angleProgress * 2);
-      bgGlow1.addColorStop(0, `rgba(0, 160, 255, ${0.12 + 0.05 * pulse1})`);
-      bgGlow1.addColorStop(0.4, `rgba(99, 102, 241, ${0.08 + 0.03 * pulse1})`);
-      bgGlow1.addColorStop(0.75, 'rgba(12, 10, 36, 0.4)');
-      bgGlow1.addColorStop(1, 'rgba(2, 5, 14, 0)');
-      ctx.fillStyle = bgGlow1;
+      // Subtle ambient radial glow (Acid lime & lavender gradient)
+      const glowGrad = ctx.createRadialGradient(cx, cy, 60, cx, cy, 720);
+      const pulseAura = 0.5 + 0.5 * Math.sin(angleProgress * 2);
+      glowGrad.addColorStop(0, `rgba(204, 255, 0, ${0.05 + 0.02 * pulseAura})`);
+      glowGrad.addColorStop(0.4, `rgba(167, 139, 250, ${0.04 + 0.02 * pulseAura})`);
+      glowGrad.addColorStop(0.8, 'rgba(8, 9, 14, 0.4)');
+      glowGrad.addColorStop(1, 'rgba(7, 8, 12, 0)');
+      ctx.fillStyle = glowGrad;
       ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
 
-      // Secondary floating aura
-      const auraX = cx + Math.sin(angleProgress) * 90;
-      const auraY = cy + Math.cos(angleProgress) * 50;
-      const bgGlow2 = ctx.createRadialGradient(auraX, auraY, 20, auraX, auraY, 480);
-      bgGlow2.addColorStop(0, 'rgba(0, 255, 200, 0.06)');
-      bgGlow2.addColorStop(0.6, 'rgba(139, 92, 246, 0.04)');
-      bgGlow2.addColorStop(1, 'rgba(2, 5, 14, 0)');
-      ctx.fillStyle = bgGlow2;
-      ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+      // 2. Minimalist Dot Matrix Grid with Coordinate Crosshairs
+      drawDottedGrid(angleProgress);
 
-      // 3. Perspective Grid Ground & Ceiling Lines
-      drawPerspectiveGrid(angleProgress);
+      // 3. Floating Dust / Ambient Micro-sparks (Seamless looping Y)
+      drawAmbientDust(progress);
 
-      // 4. Ambient Orbiting Particle Dust (Looping 3D)
-      drawAmbientParticles(angleProgress);
+      // 4. Concentric Tech Orbit Rings
+      drawOrbitRings(angleProgress);
 
-      // 5. Outer Sci-Fi HUD Reticles & Waveform Ring
-      drawOuterHUD(angleProgress);
+      // 5. Central Sleek Glassmorphism Cyber Card
+      drawCentralCard(angleProgress, progress);
 
-      // 6. 3D Gyroscope Gimbal Rings
-      drawGimbalRings(angleProgress);
+      // 6. Gen-Z Floating Tech Badges / Pills (Spring Floating)
+      drawFloatingWidgets(angleProgress, progress);
 
-      // 7. Rotating 3D Quantum Icosahedron / Polyhedron Core
-      drawQuantumIcosahedron(angleProgress);
-
-      // 8. Central Radiant Plasma Star
-      drawCentralPlasma(angleProgress);
-
-      // 9. Precision Sci-Fi Corner Bracket Accents & Metadata
-      drawSciFiAccents(progress, angleProgress);
+      // 7. Minimalist Safe-Zone Framing & Monospace Telemetry
+      drawMinimalFraming(progress);
     }
 
     // -------------------------------------------------------------
-    // Perspective Grid Lines
+    // Dotted Matrix Grid
     // -------------------------------------------------------------
-    function drawPerspectiveGrid(angleProgress) {
+    function drawDottedGrid(angleProgress) {
       ctx.save();
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+      const spacing = 48;
+      const dotRadius = 1;
       
-      const gridY = 880;
-      const horizonY = 540;
-      const count = 18;
-      for (let i = -count; i <= count; i++) {
-        const xOffset = i * 85;
-        ctx.beginPath();
-        ctx.moveTo(cx, horizonY);
-        ctx.lineTo(cx + xOffset * 3.5, CONFIG.height);
-        ctx.stroke();
-      }
+      // Calculate grid bounds
+      const startX = 96;
+      const endX = CONFIG.width - 96;
+      const startY = 96;
+      const endY = CONFIG.height - 96;
 
-      // Horizontal lines with perspective compression
-      const lines = 7;
-      for (let j = 1; j <= lines; j++) {
-        const p = j / lines;
-        const y = horizonY + Math.pow(p, 2.2) * (CONFIG.height - horizonY);
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(CONFIG.width, y);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    // -------------------------------------------------------------
-    // Ambient Looping Particles
-    // -------------------------------------------------------------
-    function drawAmbientParticles(angleProgress) {
-      ctx.save();
-      for (let i = 0; i < NUM_PARTICLES; i++) {
-        const p = particles[i];
-        // Exact integer loop rotation
-        const currentAngle = p.baseAngle + angleProgress * p.radialSpeed;
-        const currentDist = p.baseDist + Math.sin(angleProgress * 2 + p.baseAngle) * 35;
-        
-        // 3D rotation projection
-        const x3d = Math.cos(currentAngle) * currentDist;
-        const y3d = Math.sin(currentAngle) * currentDist * (0.45 + p.orbitTilt * 0.2);
-        const z3d = p.zBase + Math.cos(angleProgress + p.baseAngle) * 80;
-        
-        const fov = 800;
-        const scale = fov / (fov + z3d + 300);
-        const px = cx + x3d * scale;
-        const py = cy + y3d * scale;
-        const alpha = Math.max(0.15, Math.min(0.9, 0.4 + 0.3 * Math.sin(angleProgress * 3 + p.baseAngle)));
-
-        ctx.beginPath();
-        ctx.arc(px, py, p.size * scale, 0, Math.PI * 2);
-        if (p.colorType === 'cyan') {
-          ctx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
-          ctx.shadowColor = '#00f0ff';
-        } else if (p.colorType === 'violet') {
-          ctx.fillStyle = `rgba(168, 85, 247, ${alpha})`;
-          ctx.shadowColor = '#a855f7';
-        } else {
-          ctx.fillStyle = `rgba(52, 211, 153, ${alpha})`;
-          ctx.shadowColor = '#34d399';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
+      for (let x = startX; x <= endX; x += spacing) {
+        for (let y = startY; y <= endY; y += spacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+          ctx.fill();
         }
-        ctx.shadowBlur = p.glow * scale;
-        ctx.fill();
       }
-      ctx.restore();
-    }
 
-    // -------------------------------------------------------------
-    // Outer Sci-Fi HUD Reticles & Waveform Rings
-    // -------------------------------------------------------------
-    function drawOuterHUD(angleProgress) {
-      ctx.save();
-
-      // Outer Ring 1: Thin boundary with ticks
-      const rOuter = 460;
-      ctx.beginPath();
-      ctx.arc(cx, cy, rOuter, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Dashed Rotating Ring (Clockwise 1x cycle)
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(angleProgress);
-      ctx.beginPath();
-      ctx.arc(0, 0, rOuter - 18, 0, Math.PI * 2);
-      ctx.setLineDash([8, 16, 24, 16]);
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.restore();
-
-      // Counter-Rotating Segmented Ring (-1x cycle)
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(-angleProgress);
-      ctx.beginPath();
-      ctx.arc(0, 0, rOuter - 38, 0, Math.PI * 2);
-      ctx.setLineDash([40, 20, 10, 20]);
-      ctx.strokeStyle = 'rgba(168, 85, 247, 0.3)';
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-
-      // Precision Degree Tick Marks
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
-      const totalTicks = 72;
-      for (let t = 0; t < totalTicks; t++) {
-        const theta = (t / totalTicks) * Math.PI * 2;
-        const isMajor = t % 6 === 0;
-        const tickLen = isMajor ? 12 : 5;
-        const r1 = rOuter - 8;
-        const r2 = r1 - tickLen;
-        ctx.beginPath();
-        ctx.moveTo(Math.cos(theta) * r1, Math.sin(theta) * r1);
-        ctx.lineTo(Math.cos(theta) * r2, Math.sin(theta) * r2);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      // Looping Undulating Audio / Energy Waveform Ring
-      ctx.save();
-      ctx.beginPath();
-      const waveRadius = 380;
-      for (let k = 0; k <= WAVE_POINTS; k++) {
-        const theta = (k / WAVE_POINTS) * Math.PI * 2;
-        // Integer harmonic waves guarantee seamlessness
-        const wave = Math.sin(theta * 8 + angleProgress * 2) * 9 +
-                     Math.cos(theta * 14 - angleProgress * 3) * 6;
-        const r = waveRadius + wave;
-        const wx = cx + Math.cos(theta) * r;
-        const wy = cy + Math.sin(theta) * r;
-        if (k === 0) ctx.moveTo(wx, wy);
-        else ctx.lineTo(wx, wy);
-      }
-      ctx.closePath();
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.55)';
-      ctx.shadowColor = '#00f0ff';
-      ctx.shadowBlur = 10;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.restore();
-    }
-
-    // -------------------------------------------------------------
-    // 3D Gimbal Rings (Multi-axis Gyroscope)
-    // -------------------------------------------------------------
-    function drawGimbalRings(angleProgress) {
-      ctx.save();
-      const rings = [
-        { r: 310, rotX: angleProgress * 2, rotY: angleProgress, rotZ: 0.4, color: 'rgba(0, 240, 255, 0.6)', glow: '#00f0ff', dash: [14, 10] },
-        { r: 260, rotX: -angleProgress, rotY: angleProgress * 2, rotZ: -0.5, color: 'rgba(168, 85, 247, 0.55)', glow: '#a855f7', dash: [30, 15] },
-        { r: 210, rotX: angleProgress * 3, rotY: -angleProgress * 1, rotZ: 0.8, color: 'rgba(52, 211, 153, 0.5)', glow: '#34d399', dash: [8, 8] }
+      // 4 Micro Plus Crosshairs (+)
+      const crosshairs = [
+        { x: 192, y: 192 },
+        { x: CONFIG.width - 192, y: 192 },
+        { x: 192, y: CONFIG.height - 192 },
+        { x: CONFIG.width - 192, y: CONFIG.height - 192 }
       ];
 
-      rings.forEach(ring => {
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = 'rgba(204, 255, 0, 0.35)';
+      crosshairs.forEach(pt => {
+        const len = 7;
         ctx.beginPath();
-        const steps = 90;
-        let started = false;
-
-        for (let i = 0; i <= steps; i++) {
-          const theta = (i / steps) * Math.PI * 2;
-          let x = Math.cos(theta) * ring.r;
-          let y = Math.sin(theta) * ring.r;
-          let z = 0;
-
-          // Euler rotation
-          // Rotate X
-          let y1 = y * Math.cos(ring.rotX) - z * Math.sin(ring.rotX);
-          let z1 = y * Math.sin(ring.rotX) + z * Math.cos(ring.rotX);
-          // Rotate Y
-          let x2 = x * Math.cos(ring.rotY) + z1 * Math.sin(ring.rotY);
-          let z2 = -x * Math.sin(ring.rotY) + z1 * Math.cos(ring.rotY);
-          // Rotate Z
-          let x3 = x2 * Math.cos(ring.rotZ) - y1 * Math.sin(ring.rotZ);
-          let y3 = x2 * Math.sin(ring.rotZ) + y1 * Math.cos(ring.rotZ);
-
-          const fov = 750;
-          const scale = fov / (fov + z2 + 400);
-          const px = cx + x3 * scale;
-          const py = cy + y3 * scale;
-
-          if (!started) {
-            ctx.moveTo(px, py);
-            started = true;
-          } else {
-            ctx.lineTo(px, py);
-          }
-        }
-        ctx.closePath();
-        ctx.save();
-        ctx.setLineDash(ring.dash);
-        ctx.strokeStyle = ring.color;
-        ctx.shadowColor = ring.glow;
-        ctx.shadowBlur = 12;
-        ctx.lineWidth = 2.2;
+        ctx.moveTo(pt.x - len, pt.y);
+        ctx.lineTo(pt.x + len, pt.y);
+        ctx.moveTo(pt.x, pt.y - len);
+        ctx.lineTo(pt.x, pt.y + len);
         ctx.stroke();
-        ctx.restore();
       });
 
       ctx.restore();
     }
 
     // -------------------------------------------------------------
-    // Rotating 3D Quantum Icosahedron Core
+    // Ambient Dust Particles
     // -------------------------------------------------------------
-    function drawQuantumIcosahedron(angleProgress) {
+    function drawAmbientDust(progress) {
       ctx.save();
-      const radius = 135 + Math.sin(angleProgress * 4) * 8;
-      
-      // Dual-axis seamless integer rotations (1x around Y, 2x around X)
-      const rotY = angleProgress * 1;
-      const rotX = angleProgress * 2;
-      const rotZ = angleProgress * 1;
+      dustParticles.forEach(p => {
+        // Continuous upward drift with modulo wrap
+        const drift = (progress * p.speed) % 1;
+        let y = p.baseY - drift * 300;
+        if (y < 0) y += CONFIG.height;
 
-      // Project vertices
-      const projected = icosaVertices.map(v => {
-        let x = v[0] * radius;
-        let y = v[1] * radius;
-        let z = v[2] * radius;
+        ctx.fillStyle = `rgba(204, 255, 0, ${p.alpha})`;
+        ctx.beginPath();
+        ctx.arc(p.x, y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // Minimalist Orbit Rings
+    // -------------------------------------------------------------
+    function drawOrbitRings(angleProgress) {
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      // Ring 1: Thin Outer Circular Boundary
+      const rOuter = 410;
+      ctx.beginPath();
+      ctx.arc(0, 0, rOuter, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Ring 2: Rotating Dashed Acid Lime Ring (1x full rotation)
+      ctx.save();
+      ctx.rotate(angleProgress);
+      ctx.beginPath();
+      ctx.arc(0, 0, rOuter - 24, 0, Math.PI * 2);
+      ctx.setLineDash([6, 18, 28, 18]);
+      ctx.strokeStyle = 'rgba(204, 255, 0, 0.3)';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      // Satellite Orbiter
+      ctx.beginPath();
+      ctx.arc(rOuter - 24, 0, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#ccff00';
+      ctx.shadowColor = '#ccff00';
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.restore();
+
+      // Ring 3: Counter-rotating Lavender Segment (-1x full rotation)
+      ctx.save();
+      ctx.rotate(-angleProgress);
+      ctx.beginPath();
+      ctx.arc(0, 0, rOuter - 48, 0, Math.PI * 0.7);
+      ctx.strokeStyle = 'rgba(167, 139, 250, 0.45)';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, 0, rOuter - 48, Math.PI, Math.PI * 1.5);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // Central Glassmorphic Cyber Card
+    // -------------------------------------------------------------
+    function drawCentralCard(angleProgress, progress) {
+      ctx.save();
+      
+      // Floating card levitation (Seamless sine wave)
+      const floatY = Math.sin(angleProgress * 2) * 10;
+      const cardW = 540;
+      const cardH = 340;
+      const cardX = cx - cardW / 2;
+      const cardY = cy - cardH / 2 + floatY;
+      const cornerR = 24;
+
+      // Card Backdrop Glow
+      ctx.shadowColor = 'rgba(204, 255, 0, 0.15)';
+      ctx.shadowBlur = 40;
+
+      // Card Glass Surface
+      ctx.fillStyle = 'rgba(14, 18, 28, 0.72)';
+      roundRect(ctx, cardX, cardY, cardW, cardH, cornerR);
+      ctx.fill();
+      ctx.shadowBlur = 0; // reset
+
+      // Dual-gradient Border (Acid lime to Lavender)
+      const borderGrad = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY + cardH);
+      borderGrad.addColorStop(0, 'rgba(204, 255, 0, 0.65)');
+      borderGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.15)');
+      borderGrad.addColorStop(1, 'rgba(167, 139, 250, 0.55)');
+      ctx.strokeStyle = borderGrad;
+      ctx.lineWidth = 1.6;
+      roundRect(ctx, cardX, cardY, cardW, cardH, cornerR);
+      ctx.stroke();
+
+      // Card Header: Micro Status Bar
+      const headerY = cardY + 36;
+      
+      // Status Indicator Dot (Pulsing green)
+      const pulseGreen = 0.6 + 0.4 * Math.sin(angleProgress * 4);
+      ctx.fillStyle = `rgba(204, 255, 0, ${pulseGreen})`;
+      ctx.beginPath();
+      ctx.arc(cardX + 36, headerY, 4.5, 0, Math.PI * 2);
+      ctx.shadowColor = '#ccff00';
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Header Text
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '700 13px "Space Grotesk", sans-serif';
+      ctx.fillText('NEURAL_ENGINE // v2.4', cardX + 52, headerY + 4);
+
+      // Mini Pill Tag (Right side of header)
+      const pillW = 86;
+      const pillH = 22;
+      const pillX = cardX + cardW - pillW - 32;
+      const pillY = headerY - 12;
+      ctx.fillStyle = 'rgba(204, 255, 0, 0.1)';
+      ctx.strokeStyle = 'rgba(204, 255, 0, 0.3)';
+      ctx.lineWidth = 1;
+      roundRect(ctx, pillX, pillY, pillW, pillH, 999);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ccff00';
+      ctx.font = '700 10px "JetBrains Mono", monospace';
+      ctx.fillText('● ACTIVE', pillX + 16, pillY + 15);
+
+      // Card Divider Line
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cardX + 32, headerY + 22);
+      ctx.lineTo(cardX + cardW - 32, headerY + 22);
+      ctx.stroke();
+
+      // -------------------------------------------------------------
+      // Inside Card: 3D Rotating Isometric Wireframe Cube
+      // -------------------------------------------------------------
+      const cubeCenterX = cardX + 140;
+      const cubeCenterY = cardY + 195;
+      drawRotatingCube(cubeCenterX, cubeCenterY, angleProgress);
+
+      // -------------------------------------------------------------
+      // Inside Card Right: Live Looping Audio / Rhythm Equalizer
+      // -------------------------------------------------------------
+      const eqX = cardX + 265;
+      const eqY = cardY + 195;
+      drawLiveEqualizer(eqX, eqY, angleProgress);
+
+      // Card Footer Stats
+      ctx.fillStyle = 'rgba(203, 213, 225, 0.6)';
+      ctx.font = '500 11px "JetBrains Mono", monospace';
+      ctx.fillText('CORE FREQ: 4.80 GHz', cardX + 36, cardY + cardH - 24);
+      
+      const pct = Math.floor(progress * 100);
+      ctx.fillStyle = '#a78bfa';
+      ctx.fillText(`BUFFER: ${pct}% SYNC`, cardX + cardW - 148, cardY + cardH - 24);
+
+      ctx.restore();
+    }
+
+    // Helper: Rounded Rectangle Path
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.arcTo(x + w, y, x + w, y + r, r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+      ctx.lineTo(x + r, y + h);
+      ctx.arcTo(x, y + h, x, y + h - r, r);
+      ctx.lineTo(x, y + r);
+      ctx.arcTo(x, y, x + r, y, r);
+      ctx.closePath();
+    }
+
+    // -------------------------------------------------------------
+    // 3D Rotating Isometric Cube (Looping 1x full turn around Y & X)
+    // -------------------------------------------------------------
+    function drawRotatingCube(xCenter, yCenter, angleProgress) {
+      ctx.save();
+      const size = 52;
+      const rotY = angleProgress * 1;
+      const rotX = angleProgress * 1;
+      const rotZ = 0.45;
+
+      const projected = cubeVertices.map(v => {
+        let x = v[0] * size;
+        let y = v[1] * size;
+        let z = v[2] * size;
 
         // Rotate Y
         let x1 = x * Math.cos(rotY) + z * Math.sin(rotY);
@@ -488,116 +479,154 @@
         let x3 = x1 * Math.cos(rotZ) - y2 * Math.sin(rotZ);
         let y3 = x1 * Math.sin(rotZ) + y2 * Math.cos(rotZ);
 
-        const fov = 650;
-        const scale = fov / (fov + z2 + 350);
+        const fov = 400;
+        const scale = fov / (fov + z2 + 200);
         return {
-          x: cx + x3 * scale,
-          y: cy + y3 * scale,
-          z: z2,
-          scale: scale
+          x: xCenter + x3 * scale,
+          y: yCenter + y3 * scale,
+          z: z2
         };
       });
 
-      // Draw Edges with Z-depth shading
-      ctx.lineWidth = 2.2;
-      ctx.shadowBlur = 14;
-      ctx.shadowColor = '#00f0ff';
-
-      icosaEdges.forEach(([i, j]) => {
+      // Draw Edges
+      ctx.lineWidth = 1.8;
+      cubeEdges.forEach(([i, j]) => {
         const p1 = projected[i];
         const p2 = projected[j];
         const avgZ = (p1.z + p2.z) / 2;
-        const alpha = Math.max(0.18, Math.min(1.0, 0.65 + avgZ / 260));
+        const alpha = Math.max(0.25, Math.min(1.0, 0.65 + avgZ / 120));
 
-        const grad = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
-        grad.addColorStop(0, `rgba(0, 240, 255, ${alpha})`);
-        grad.addColorStop(0.5, `rgba(168, 85, 247, ${alpha * 0.9})`);
-        grad.addColorStop(1, `rgba(52, 211, 153, ${alpha})`);
-
-        ctx.strokeStyle = grad;
+        ctx.strokeStyle = `rgba(204, 255, 0, ${alpha})`;
+        ctx.shadowColor = '#ccff00';
+        ctx.shadowBlur = 8;
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
       });
 
-      // Draw Vertex Quantum Nodes
+      // Draw Nodes
       projected.forEach(p => {
-        const nodeAlpha = Math.max(0.3, Math.min(1.0, 0.7 + p.z / 200));
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 4.5 * p.scale, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${nodeAlpha})`;
-        ctx.shadowColor = '#00f0ff';
-        ctx.shadowBlur = 16;
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#ccff00';
+        ctx.shadowBlur = 10;
         ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 8 * p.scale, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(0, 240, 255, ${nodeAlpha * 0.7})`;
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
       });
 
       ctx.restore();
     }
 
     // -------------------------------------------------------------
-    // Central Plasma Star / Energy Source
+    // Looping Audio/Rhythm Equalizer
     // -------------------------------------------------------------
-    function drawCentralPlasma(angleProgress) {
+    function drawLiveEqualizer(startX, centerY, angleProgress) {
       ctx.save();
-      const pulse = Math.sin(angleProgress * 4) * 0.5 + 0.5;
-      const coreR = 38 + pulse * 12;
+      const numBars = 14;
+      const barW = 8;
+      const gap = 8;
+      const maxH = 65;
 
-      // Multi-layer high-intensity bloom
-      const grad = ctx.createRadialGradient(cx, cy, 2, cx, cy, coreR * 3);
-      grad.addColorStop(0, '#ffffff');
-      grad.addColorStop(0.18, 'rgba(0, 240, 255, 0.95)');
-      grad.addColorStop(0.45, 'rgba(99, 102, 241, 0.6)');
-      grad.addColorStop(0.75, 'rgba(168, 85, 247, 0.2)');
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      for (let i = 0; i < numBars; i++) {
+        // Integer harmonic wave ensures seamless loop
+        const phase = (i / numBars) * Math.PI * 2;
+        const wave = Math.sin(phase * 2 + angleProgress * 2) * 0.4 +
+                     Math.cos(phase * 3 - angleProgress * 3) * 0.3 + 0.3;
+        const h = Math.max(8, wave * maxH);
 
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, coreR * 3, 0, Math.PI * 2);
-      ctx.fill();
+        const bx = startX + i * (barW + gap);
+        const by = centerY - h / 2;
 
-      // Bright Core Center
-      ctx.beginPath();
-      ctx.arc(cx, cy, 14 + pulse * 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = '#00f0ff';
-      ctx.shadowBlur = 30;
-      ctx.fill();
+        const grad = ctx.createLinearGradient(bx, by, bx, by + h);
+        grad.addColorStop(0, '#ccff00');
+        grad.addColorStop(1, '#a78bfa');
 
-      // Energy Cross Flare Beams
-      const beamLen = 90 + pulse * 35;
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
-      ctx.shadowColor = '#00f0ff';
-      ctx.shadowBlur = 18;
-
-      ctx.beginPath();
-      ctx.moveTo(cx - beamLen, cy);
-      ctx.lineTo(cx + beamLen, cy);
-      ctx.moveTo(cx, cy - beamLen);
-      ctx.lineTo(cx, cy + beamLen);
-      ctx.stroke();
+        ctx.fillStyle = grad;
+        ctx.shadowColor = '#ccff00';
+        ctx.shadowBlur = 6;
+        roundRect(ctx, bx, by, barW, h, 4);
+        ctx.fill();
+      }
 
       ctx.restore();
     }
 
     // -------------------------------------------------------------
-    // Precision Sci-Fi Accents & HUD Telemetry
+    // Gen-Z Floating Tech Badges / Pills
     // -------------------------------------------------------------
-    function drawSciFiAccents(progress, angleProgress) {
+    function drawFloatingWidgets(angleProgress, progress) {
       ctx.save();
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
-      ctx.lineWidth = 2;
 
-      // 4 Corner brackets (Film / Cinema 1080p framing safe-zones)
-      const pad = 48;
-      const arm = 36;
+      // Badge 1: Top-Right (⚡ ULTRA_LOW_LATENCY)
+      const b1Y = 280 + Math.sin(angleProgress * 2) * 12;
+      drawBadge(1280, b1Y, '⚡ ULTRA_LOW_LATENCY', '99.98% OK', '#ccff00');
+
+      // Badge 2: Bottom-Left (✦ AI_PIPELINE)
+      const b2Y = 720 + Math.cos(angleProgress * 2) * 12;
+      drawBadge(380, b2Y, '✦ AI_PIPELINE', 'SYNCED', '#a78bfa');
+
+      // Badge 3: Top-Left Minimal Chip (⌘ CMD+K)
+      const b3Y = 320 + Math.sin(angleProgress * 2 + 1.2) * 10;
+      drawBadge(420, b3Y, '⌘ RAPID_DISPATCH', 'READY', '#38bdf8');
+
+      // Badge 4: Bottom-Right Dial Pill
+      const b4Y = 690 + Math.sin(angleProgress * 2 + 2.5) * 11;
+      drawBadge(1220, b4Y, '◎ FRAME_RATE', '30.0 FPS', '#f43f5e');
+
+      ctx.restore();
+    }
+
+    // Helper: Draw Glassmorphic Pill Badge
+    function drawBadge(x, y, title, subtitle, accentColor) {
+      ctx.save();
+      const bw = 210;
+      const bh = 54;
+      const br = 16;
+
+      ctx.fillStyle = 'rgba(15, 20, 32, 0.82)';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowBlur = 18;
+      roundRect(ctx, x, y, bw, bh, br);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1.2;
+      roundRect(ctx, x, y, bw, bh, br);
+      ctx.stroke();
+
+      // Accent Dot
+      ctx.fillStyle = accentColor;
+      ctx.shadowColor = accentColor;
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(x + 22, y + bh / 2, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Texts
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '700 12px "Space Grotesk", sans-serif';
+      ctx.fillText(title, x + 38, y + 24);
+
+      ctx.fillStyle = accentColor;
+      ctx.font = '700 11px "JetBrains Mono", monospace';
+      ctx.fillText(subtitle, x + 38, y + 42);
+
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // Minimalist Safe-Zone Framing & Typography
+    // -------------------------------------------------------------
+    function drawMinimalFraming(progress) {
+      ctx.save();
+      const pad = 56;
+      const arm = 28;
+
+      // Safe-zone subtle corner markers
+      ctx.strokeStyle = 'rgba(204, 255, 0, 0.4)';
+      ctx.lineWidth = 1.6;
 
       // Top-Left
       ctx.beginPath();
@@ -627,33 +656,38 @@
       ctx.lineTo(CONFIG.width - pad, CONFIG.height - pad - arm);
       ctx.stroke();
 
-      // Telemetry Text Overlays (High-tech look without copyright)
-      ctx.fillStyle = 'rgba(0, 240, 255, 0.7)';
-      ctx.font = '12px "Consolas", "Courier New", monospace';
+      // Top Left Metadata
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '700 13px "Space Grotesk", sans-serif';
       ctx.letterSpacing = '1px';
+      ctx.fillText('MOTION STUDIO // TECH.GEN_Z', pad + 14, pad + 18);
 
-      ctx.fillText('SYS.CORE // QUANTUM NEXUS v4.2', pad + 12, pad + 20);
-      ctx.fillText('RES: 1920x1080 FHD | 30.00 FPS', pad + 12, pad + 38);
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '500 11px "JetBrains Mono", monospace';
+      ctx.fillText('ASSET ID: #STK-8092 // FHD 1080p', pad + 14, pad + 36);
 
+      // Top Right Frame & Time
       const frameNow = Math.floor(progress * (CONFIG.totalFrames - 1));
-      ctx.fillText(`FRAME: ${String(frameNow).padStart(4, '0')} / ${CONFIG.totalFrames}`, CONFIG.width - pad - 210, pad + 20);
-      ctx.fillText(`TIME: ${(progress * CONFIG.duration).toFixed(2)}s / ${CONFIG.duration}.00s`, CONFIG.width - pad - 210, pad + 38);
+      ctx.fillStyle = '#ccff00';
+      ctx.font = '700 12px "JetBrains Mono", monospace';
+      ctx.fillText(`FRAME ${String(frameNow).padStart(3, '0')} / ${CONFIG.totalFrames}`, CONFIG.width - pad - 160, pad + 18);
 
-      // Bottom Center Loop Status Indicator
-      const percent = Math.floor(progress * 100);
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.65)';
-      ctx.fillText(`CYCLE PROGRESS [ ${percent}% ]`, cx - 85, CONFIG.height - pad - 12);
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '500 11px "JetBrains Mono", monospace';
+      ctx.fillText(`TIME ${(progress * CONFIG.duration).toFixed(2)}s / ${CONFIG.duration}.00s`, CONFIG.width - pad - 160, pad + 36);
 
-      // Mini Progress Bar
-      const barW = 240;
-      const barH = 3;
+      // Bottom Center Loop Progress
+      const barW = 200;
+      const barH = 2.5;
       const barX = cx - barW / 2;
-      const barY = CONFIG.height - pad;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      const barY = CONFIG.height - pad - 10;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
       ctx.fillRect(barX, barY, barW, barH);
-      ctx.fillStyle = '#00f0ff';
-      ctx.shadowColor = '#00f0ff';
-      ctx.shadowBlur = 8;
+
+      ctx.fillStyle = '#ccff00';
+      ctx.shadowColor = '#ccff00';
+      ctx.shadowBlur = 6;
       ctx.fillRect(barX, barY, barW * progress, barH);
 
       ctx.restore();
@@ -662,14 +696,12 @@
     // -------------------------------------------------------------
     // GSAP Timeline & Deterministic Engine Integration
     // -------------------------------------------------------------
-    // Proxy object for GSAP tweening
     const animState = { progress: 0 };
 
-    // GSAP Timeline with infinite seamless loop
     const masterTimeline = gsap.timeline({
       duration: CONFIG.duration,
       repeat: -1,
-      paused: false, // Auto-play in browser preview
+      paused: false,
       ease: 'none'
     });
 
@@ -686,10 +718,6 @@
     // -------------------------------------------------------------
     // Global Deterministic API for Playwright (render.mjs)
     // -------------------------------------------------------------
-    /**
-     * Called by Playwright script to render a precise frame.
-     * Pauses real-time playback, updates the canvas immediately.
-     */
     window.renderFrame = function(frameIndex, totalFrames) {
       if (!masterTimeline.paused()) {
         masterTimeline.pause();
@@ -703,9 +731,6 @@
       return { frame: frameIndex, total: total, progress: p };
     };
 
-    /**
-     * Seek to exact normalized progress (0.0 to 1.0)
-     */
     window.seekToProgress = function(progress) {
       if (!masterTimeline.paused()) {
         masterTimeline.pause();
@@ -718,7 +743,7 @@
       return p;
     };
 
-    // Flag to inform Playwright that canvas and scripts are completely initialized
+    // Flag ready for Playwright automation
     window.__READY__ = true;
 
     // -------------------------------------------------------------
@@ -762,7 +787,7 @@
       updatePreviewHUD(p);
     });
 
-    // Initial render
+    // Initial render frame 0
     renderScene(0);
   </script>
 </body>
