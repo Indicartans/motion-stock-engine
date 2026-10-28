@@ -1,0 +1,27 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Render frames (temporary PNG screenshots)
+frames/*
+!frames/.gitkeep
+
+# Output videos
+output/*
+!output/.gitkeep
+
+# Environment and local settings
+.env
+.env.local
+.env.*.local
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editors
+.vscode/
+.idea/
