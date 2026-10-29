@@ -1,6 +1,7 @@
-buatkan lagi motion video dengan tema abstrak dengan referensi style seperti di https://pin.it/6mKjTezTr
+buatkan animasi motion video dengan tema retro dan video yang reusable dengan referensi mirip dengan ini https://id.pinterest.com/pin/1049268413194841094/
 
 note :
 - sesuaikan dengan struktur folder dan aturan yang sudah ada
 - gunakan animasi yang seamless loop
-- durasi video sekitar 5-10 detik
+- durasi video sekitar 5-15 detik
+- cukup bikin animasinya saja tanpa render dan generate ke mp4

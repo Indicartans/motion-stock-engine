@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
-  <title>Hypnotic Light Burst - Abstract Energy Rays & Color Flow</title>
+  <title>Retro Asterisk Motion Background - Tactile Risograph Texture</title>
   <style>
     * {
       box-sizing: border-box;
@@ -12,32 +12,42 @@
       user-select: none;
     }
 
-    body {
-      background-color: #020204;
-      color: #f8fafc;
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    html, body {
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
-      width: 1920px;
-      height: 1080px;
-      position: relative;
+      background-color: #010a05;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
-    #canvas-container {
+    /* ---------------------------------------------------------
+       RESPONSIVE STAGE CONTAINER (Strict 1920x1080 canvas)
+       Auto-scales proportionally in browser preview; 1.0 in render
+       --------------------------------------------------------- */
+    #stage-container {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: center center;
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.95);
+      background: #010c06;
+    }
+
+    #motionCanvas {
       position: absolute;
       top: 0;
       left: 0;
       width: 1920px;
       height: 1080px;
-      background: #020205;
-    }
-
-    canvas {
       display: block;
-      width: 1920px;
-      height: 1080px;
     }
 
-    /* Preview controls overlay (Visible only in normal browser preview, auto-hidden in render mode) */
+    /* ---------------------------------------------------------
+       MINIMALIST SLEEK HUD CONTROLS (Auto-hidden in render mode)
+       --------------------------------------------------------- */
     #preview-controls {
       position: absolute;
       bottom: 28px;
@@ -45,26 +55,28 @@
       transform: translateX(-50%);
       display: flex;
       align-items: center;
-      gap: 16px;
-      background: rgba(10, 8, 18, 0.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 110, 220, 0.35);
+      gap: 12px;
+      background: rgba(3, 16, 10, 0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(74, 222, 128, 0.3);
       border-radius: 9999px;
-      padding: 10px 24px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 24px rgba(255, 60, 180, 0.2);
+      padding: 8px 20px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 25px rgba(74, 222, 128, 0.15);
       z-index: 100;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s ease;
     }
 
-    .hide-controls #preview-controls {
+    .hide-controls #preview-controls,
+    .hide-controls #header-info {
       display: none !important;
     }
 
     .btn {
-      background: linear-gradient(135deg, #ff3399, #ffaa00);
-      color: #050208;
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #021a0d;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 12px;
       letter-spacing: 0.5px;
       border: none;
       border-radius: 9999px;
@@ -74,39 +86,126 @@
       align-items: center;
       gap: 6px;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
     }
 
     .btn:hover {
-      box-shadow: 0 0 24px rgba(255, 110, 200, 0.8);
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.8);
       transform: scale(1.04);
     }
 
-    .slider {
-      width: 300px;
-      accent-color: #ff3399;
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-secondary {
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      color: #86efac;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 9999px;
       cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(74, 222, 128, 0.25);
+      color: #ffffff;
+    }
+
+    .btn-secondary.active {
+      background: #4ade80;
+      color: #021a0d;
+      font-weight: 700;
+      border-color: #4ade80;
+    }
+
+    .slider {
+      width: 200px;
+      accent-color: #4ade80;
+      cursor: pointer;
+      height: 5px;
+      border-radius: 3px;
     }
 
     .telemetry {
       font-family: 'Consolas', 'Courier New', monospace;
-      font-size: 13px;
-      color: #fbcfe8;
+      font-size: 12px;
+      color: #bbf7d0;
       letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
     .badge {
       font-size: 11px;
       font-weight: 700;
       font-family: 'Consolas', monospace;
-      color: #fed7aa;
-      background: rgba(255, 170, 0, 0.14);
-      border: 1px solid rgba(255, 170, 0, 0.4);
+      color: #86efac;
+      background: rgba(74, 222, 128, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.3);
       padding: 3px 10px;
       border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(74, 222, 128, 0.25);
+    }
+
+    .theme-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Minimal Floating Header */
+    #header-info {
+      position: absolute;
+      top: 26px;
+      left: 32px;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: opacity 0.3s ease;
+    }
+
+    .project-pill {
+      background: rgba(3, 16, 10, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: #86efac;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #4ade80;
+      animation: pulseAnim 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.3); }
     }
   </style>
 
-  <!-- Load GSAP locally with CDN fallback -->
+  <!-- GSAP Local with CDN Fallback -->
   <script src="./node_modules/gsap/dist/gsap.min.js"></script>
   <script>
     if (typeof gsap === 'undefined') {
@@ -115,401 +214,498 @@
   </script>
 </head>
 <body>
-  <div id="canvas-container">
+  <div id="stage-container">
     <canvas id="motionCanvas" width="1920" height="1080"></canvas>
-  </div>
 
-  <!-- Interactive HUD for browser preview (hidden during automated render) -->
-  <div id="preview-controls">
-    <button id="playBtn" class="btn">
-      <span id="playIcon">⏸</span> <span id="playText">PAUSE</span>
-    </button>
-    <input type="range" id="scrubber" class="slider" min="0" max="1" step="0.001" value="0">
-    <div class="telemetry" id="timeInfo">0.00s / 8.00s</div>
-    <div class="telemetry badge">FRAME: <span id="frameInfo">0</span> / 240</div>
-    <div class="badge" style="color: #f472b6; border-color: rgba(244, 114, 182, 0.4); background: rgba(244, 114, 182, 0.12);">
-      HYPNOTIC LIGHT BURST
+    <!-- Header Info -->
+    <div id="header-info">
+      <div class="project-pill">
+        <div class="pulse-dot"></div>
+        RETRO MOTION STOCK • 1080P SEAMLESS LOOP
+      </div>
+      <div class="badge" id="themeBadge">THEME: EMERALD (REF)</div>
+      <div class="badge" style="color: #cbd5e1; border-color: rgba(203, 213, 225, 0.25);">PRESS 'H' TO HIDE HUD</div>
+    </div>
+
+    <!-- Minimalist Preview HUD -->
+    <div id="preview-controls">
+      <button id="playBtn" class="btn" title="Toggle Play / Pause (Spacebar)">
+        <span id="playIcon">⏸</span> <span id="playText">PAUSE</span>
+      </button>
+      <input type="range" id="scrubber" class="slider" min="0" max="1" step="0.001" value="0">
+      <div class="telemetry" id="timeInfo">0.00s / 10.00s</div>
+      <div class="telemetry badge">FR: <span id="frameInfo">0</span>/300</div>
+
+      <div class="divider"></div>
+
+      <!-- Theme Switcher -->
+      <div class="theme-group">
+        <button class="btn-secondary active" data-theme="emerald" title="Reference Pinterest Look">Emerald</button>
+        <button class="btn-secondary" data-theme="amber" title="70s Tangerine & Cream">Amber</button>
+        <button class="btn-secondary" data-theme="cobalt" title="Y2K Cobalt Cyber">Cobalt</button>
+        <button class="btn-secondary" data-theme="vapor" title="Acid Vapor Violet">Vapor</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Texture Intensity Switcher -->
+      <button class="btn-secondary active" id="textureBtn" title="Toggle Texture Level">Texture: HEAVY</button>
+
+      <!-- Arms Style Switcher -->
+      <button class="btn-secondary" id="armsToggle" title="Toggle Asterisk Arm Count">Arms: 6+6</button>
+
+      <!-- Creator Safe Zone Guide -->
+      <button class="btn-secondary" id="guideToggle" title="Toggle 9:16 Reel Safe Zone">Guide: OFF</button>
     </div>
   </div>
 
   <script>
     // -------------------------------------------------------------
-    // Configuration (Matching rules.md: 1080p, 30fps, 8s loop)
+    // Configuration & Specifications (Matching rules.md: 1080p, 30fps, 10s loop)
     // -------------------------------------------------------------
     const CONFIG = {
       width: 1920,
       height: 1080,
-      duration: 8,        // 8 seconds (Within 5-10s specification)
+      duration: 10,       // 10 Seconds (5-15s requirement)
       fps: 30,            // 30 FPS
-      totalFrames: 240    // 8s * 30fps = 240 frames
+      totalFrames: 300    // 10s * 30fps = 300 frames
     };
 
+    const stage = document.getElementById('stage-container');
     const canvas = document.getElementById('motionCanvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
     const cx = CONFIG.width / 2;
     const cy = CONFIG.height / 2;
 
-    // -------------------------------------------------------------
-    // Procedural Energy Rays Model
-    // -------------------------------------------------------------
-    const NUM_RAYS = 72;
-    const rayProfiles = [];
-    for (let i = 0; i < NUM_RAYS; i++) {
-      const baseTheta = (i / NUM_RAYS) * Math.PI * 2;
-      rayProfiles.push({
-        index: i,
-        baseAngle: baseTheta,
-        baseLen: 620 + (i % 7) * 45 + ((i * 13) % 90),
-        width: 18 + (i % 5) * 8,
-        speedFactor: 1, // 1x full rotation per 8s
-        hueGroup: i % 4, // 0: Magenta/Pink, 1: Golden Amber, 2: Electric Cyan, 3: Deep Violet
-        harmonicPhase: (i * 3) % 11
-      });
+    // Responsive auto-fit scaling for browser window preview
+    function updateStageScale() {
+      const scale = Math.min(window.innerWidth / CONFIG.width, window.innerHeight / CONFIG.height);
+      stage.style.transform = `scale(${scale})`;
     }
-
-    // Secondary Fine Filament Rays (Counter-rotating)
-    const NUM_FILAMENTS = 64;
-    const filamentProfiles = [];
-    for (let i = 0; i < NUM_FILAMENTS; i++) {
-      filamentProfiles.push({
-        baseAngle: (i / NUM_FILAMENTS) * Math.PI * 2,
-        baseLen: 750 + ((i * 17) % 160),
-        speedFactor: -1, // -1x counter rotation
-        colorType: i % 3
-      });
-    }
-
-    // Ambient Prismatic Light Dust Particles (Looping)
-    const DUST_COUNT = 90;
-    const dustParticles = [];
-    for (let i = 0; i < DUST_COUNT; i++) {
-      dustParticles.push({
-        baseDist: 80 + Math.random() * 680,
-        baseAngle: Math.random() * Math.PI * 2,
-        size: 1.5 + Math.random() * 3.5,
-        radialCycle: 1 + Math.floor(Math.random() * 2),
-        orbitCycle: (Math.random() > 0.5 ? 1 : -1) * (1 + Math.floor(Math.random() * 2)),
-        color: ['#ff3399', '#ffaa00', '#00f0ff', '#ffffff', '#c084fc'][Math.floor(Math.random() * 5)]
-      });
-    }
+    window.addEventListener('resize', updateStageScale);
+    updateStageScale();
 
     // -------------------------------------------------------------
-    // Main Render Routine (100% Deterministic Seamless Loop)
+    // Curated Aesthetic Palettes (Rich Retro & Reusable)
+    // -------------------------------------------------------------
+    const THEMES = {
+      emerald: {
+        name: 'EMERALD (REF)',
+        bgDark: '#010c06',
+        bgMid: '#062617',
+        bgGlow: '#0e452a',
+        vignette: 'rgba(1, 10, 5, 0.78)',
+        // Hero 1 (Upper-right: Creamy Mint / Pastel white-green)
+        hero1: {
+          fill: '#dafbe7',
+          glow: 'rgba(187, 247, 208, 0.45)',
+          shadow: 'rgba(1, 14, 8, 0.85)'
+        },
+        // Hero 2 (Lower-left: Vibrant Retro Sage / Chartreuse emerald)
+        hero2: {
+          fill: '#4ade80',
+          glow: 'rgba(74, 222, 128, 0.45)',
+          shadow: 'rgba(1, 14, 8, 0.9)'
+        },
+        hudAccent: '#4ade80'
+      },
+      amber: {
+        name: 'VINTAGE AMBER & TANGERINE',
+        bgDark: '#120702',
+        bgMid: '#2d1205',
+        bgGlow: '#562409',
+        vignette: 'rgba(14, 5, 1, 0.8)',
+        hero1: {
+          fill: '#fef3c7',
+          glow: 'rgba(253, 230, 138, 0.45)',
+          shadow: 'rgba(18, 7, 2, 0.85)'
+        },
+        hero2: {
+          fill: '#f97316',
+          glow: 'rgba(249, 115, 22, 0.45)',
+          shadow: 'rgba(18, 7, 2, 0.9)'
+        },
+        hudAccent: '#f97316'
+      },
+      cobalt: {
+        name: 'Y2K COBALT CYBER',
+        bgDark: '#020914',
+        bgMid: '#071d3a',
+        bgGlow: '#0e396a',
+        vignette: 'rgba(1, 6, 14, 0.8)',
+        hero1: {
+          fill: '#e0f2fe',
+          glow: 'rgba(186, 230, 253, 0.45)',
+          shadow: 'rgba(2, 9, 20, 0.85)'
+        },
+        hero2: {
+          fill: '#38bdf8',
+          glow: 'rgba(56, 189, 248, 0.45)',
+          shadow: 'rgba(2, 9, 20, 0.9)'
+        },
+        hudAccent: '#38bdf8'
+      },
+      vapor: {
+        name: 'ACID VAPOR VIOLET',
+        bgDark: '#0f0217',
+        bgMid: '#27083a',
+        bgGlow: '#4c0f70',
+        vignette: 'rgba(12, 1, 18, 0.8)',
+        hero1: {
+          fill: '#fae8ff',
+          glow: 'rgba(245, 208, 254, 0.45)',
+          shadow: 'rgba(15, 2, 23, 0.85)'
+        },
+        hero2: {
+          fill: '#f472b6',
+          glow: 'rgba(244, 114, 182, 0.45)',
+          shadow: 'rgba(15, 2, 23, 0.9)'
+        },
+        hudAccent: '#f472b6'
+      }
+    };
+
+    let currentThemeKey = 'emerald';
+    let textureLevel = 'HEAVY'; // 'HEAVY', 'MEDIUM', 'SUBTLE', 'OFF'
+    let showGuideOverlay = false;
+    let armsMode = '6+6'; // '6+6' (clean reference style), '8+6', '8+8'
+
+    // -------------------------------------------------------------
+    // Multi-Octave Tactile Risograph & Paper Grain Texture Engine
+    // -------------------------------------------------------------
+    const TEX_SIZE = 512;
+    const textureCanvas = document.createElement('canvas');
+    textureCanvas.width = TEX_SIZE;
+    textureCanvas.height = TEX_SIZE;
+    const texCtx = textureCanvas.getContext('2d');
+    const texImgData = texCtx.createImageData(TEX_SIZE, TEX_SIZE);
+    const texData = texImgData.data;
+
+    let seed = 4242;
+    function deterministicRandom() {
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    }
+
+    // Octave 1: Smooth paper tooth / mottling
+    const gridS = 32;
+    const gridW = Math.ceil(TEX_SIZE / gridS) + 1;
+    const cellNoise = [];
+    for (let i = 0; i < gridW * gridW; i++) {
+      cellNoise.push(deterministicRandom());
+    }
+
+    for (let y = 0; y < TEX_SIZE; y++) {
+      const gy = Math.floor(y / gridS);
+      const fy = (y % gridS) / gridS;
+      for (let x = 0; x < TEX_SIZE; x++) {
+        const gx = Math.floor(x / gridS);
+        const fx = (x % gridS) / gridS;
+
+        const v00 = cellNoise[gy * gridW + gx];
+        const v10 = cellNoise[gy * gridW + gx + 1];
+        const v01 = cellNoise[(gy + 1) * gridW + gx];
+        const v11 = cellNoise[(gy + 1) * gridW + gx + 1];
+
+        // Smooth bilinear paper tooth
+        const paperTooth = ((v00 * (1 - fx) + v10 * fx) * (1 - fy) + (v01 * (1 - fx) + v11 * fx) * fy) * 50 - 25;
+        // Octave 2: Sharp risograph ink grit / stipple
+        const inkGrit = (deterministicRandom() * 2 - 1) * 75;
+
+        const val = Math.max(0, Math.min(255, 128 + paperTooth + inkGrit));
+        const idx = (y * TEX_SIZE + x) * 4;
+        texData[idx] = val;
+        texData[idx + 1] = val;
+        texData[idx + 2] = val;
+        texData[idx + 3] = 255;
+      }
+    }
+    texCtx.putImageData(texImgData, 0, 0);
+
+    // -------------------------------------------------------------
+    // Procedural Asterisk Geometry with Inherent Riso Print Texture
+    // Clipped precisely to capsule paths without circular artifacts
+    // -------------------------------------------------------------
+    function drawRetroAsterisk(targetCtx, x, y, radius, armWidth, armsCount, rotation, fillStyle, options = {}) {
+      targetCtx.save();
+      targetCtx.translate(x, y);
+      targetCtx.rotate(rotation);
+
+      const numCapsules = armsCount / 2;
+      const r = armWidth / 2;
+      const halfLen = radius - r;
+
+      // 1. Gritty drop shadow / glow pass
+      if (options.shadowColor) {
+        targetCtx.save();
+        targetCtx.shadowColor = options.shadowColor;
+        targetCtx.shadowBlur = options.shadowBlur || 38;
+        targetCtx.shadowOffsetX = options.shadowOffsetX || 0;
+        targetCtx.shadowOffsetY = options.shadowOffsetY || 18;
+        targetCtx.fillStyle = fillStyle;
+
+        for (let i = 0; i < numCapsules; i++) {
+          targetCtx.save();
+          targetCtx.rotate((i * Math.PI) / numCapsules);
+          targetCtx.beginPath();
+          targetCtx.arc(halfLen, 0, r, -Math.PI / 2, Math.PI / 2);
+          targetCtx.arc(-halfLen, 0, r, Math.PI / 2, 1.5 * Math.PI);
+          targetCtx.closePath();
+          targetCtx.fill();
+          targetCtx.restore();
+        }
+        targetCtx.restore();
+      }
+
+      // 2. Solid crisp body of the capsules
+      targetCtx.fillStyle = fillStyle;
+      for (let i = 0; i < numCapsules; i++) {
+        targetCtx.save();
+        targetCtx.rotate((i * Math.PI) / numCapsules);
+        targetCtx.beginPath();
+        targetCtx.arc(halfLen, 0, r, -Math.PI / 2, Math.PI / 2);
+        targetCtx.arc(-halfLen, 0, r, Math.PI / 2, 1.5 * Math.PI);
+        targetCtx.closePath();
+        targetCtx.fill();
+        targetCtx.restore();
+      }
+
+      // Center seal without shadow
+      targetCtx.beginPath();
+      targetCtx.arc(0, 0, r, 0, Math.PI * 2);
+      targetCtx.fill();
+
+      // 3. Tactile Print Texture ONLY on the capsule arms (using clip)
+      if (textureLevel !== 'OFF') {
+        targetCtx.save();
+        // Construct clipping path of all capsules
+        targetCtx.beginPath();
+        for (let i = 0; i < numCapsules; i++) {
+          targetCtx.save();
+          targetCtx.rotate((i * Math.PI) / numCapsules);
+          targetCtx.arc(halfLen, 0, r, -Math.PI / 2, Math.PI / 2);
+          targetCtx.arc(-halfLen, 0, r, Math.PI / 2, 1.5 * Math.PI);
+          targetCtx.closePath();
+          targetCtx.restore();
+        }
+        targetCtx.arc(0, 0, r, 0, Math.PI * 2);
+        targetCtx.clip();
+
+        let texAlpha = 0.28;
+        if (textureLevel === 'MEDIUM') texAlpha = 0.18;
+        if (textureLevel === 'SUBTLE') texAlpha = 0.10;
+
+        targetCtx.globalAlpha = texAlpha;
+        const pat = targetCtx.createPattern(textureCanvas, 'repeat');
+        targetCtx.fillStyle = pat;
+        targetCtx.fillRect(-radius, -radius, radius * 2, radius * 2);
+
+        // Directional subtle paper sheen inside the clipped arms
+        targetCtx.globalAlpha = 0.15;
+        const sheen = targetCtx.createLinearGradient(-radius * 0.7, -radius * 0.7, radius * 0.7, radius * 0.7);
+        sheen.addColorStop(0, '#ffffff');
+        sheen.addColorStop(0.5, 'transparent');
+        sheen.addColorStop(1, '#000000');
+        targetCtx.fillStyle = sheen;
+        targetCtx.fillRect(-radius, -radius, radius * 2, radius * 2);
+
+        targetCtx.restore();
+      }
+
+      targetCtx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // MAIN RENDER SCENE (Simple, Bold, Heavy Texture, Seamless Loop)
+    // Focused strictly on the 2 diagonal hero asterisks (Matching Pinterest reference)
     // -------------------------------------------------------------
     function renderScene(progress) {
+      const theme = THEMES[currentThemeKey];
       const tau = Math.PI * 2;
-      const angleProgress = progress * tau;
+      const t = progress; // 0.0 to 1.0
 
-      // 1. Deep Velvet Dark Backdrop
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = '#020205';
+      // 1. Dynamic Background Mesh with Organic Falloff
+      const lightX = cx + Math.sin(t * tau) * 160;
+      const lightY = cy - 60 + Math.cos(t * tau) * 120;
+
+      const bgGrad = ctx.createRadialGradient(lightX, lightY, 120, cx, cy, 1150);
+      bgGrad.addColorStop(0, theme.bgGlow);
+      bgGrad.addColorStop(0.5, theme.bgMid);
+      bgGrad.addColorStop(1, theme.bgDark);
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
 
-      // 2. Ambient Deep Chromatic Vignette
-      const bgGlow = ctx.createRadialGradient(cx, cy, 30, cx, cy, 850);
-      const pulseBg = 0.5 + 0.5 * Math.sin(angleProgress * 2);
-      bgGlow.addColorStop(0, `rgba(180, 20, 100, ${0.18 + 0.05 * pulseBg})`);
-      bgGlow.addColorStop(0.35, `rgba(80, 10, 120, ${0.12 + 0.04 * pulseBg})`);
-      bgGlow.addColorStop(0.7, 'rgba(15, 5, 25, 0.5)');
-      bgGlow.addColorStop(1, 'rgba(2, 2, 5, 1)');
-      ctx.fillStyle = bgGlow;
+      // Diagonal luminous accent flow
+      const diagX = cx - Math.cos(t * tau) * 220;
+      const diagY = cy + Math.sin(t * tau) * 180;
+      const diagGrad = ctx.createRadialGradient(diagX, diagY, 50, diagX, diagY, 700);
+      diagGrad.addColorStop(0, theme.hero2.glow);
+      diagGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.save();
+      ctx.globalAlpha = 0.28;
+      ctx.fillStyle = diagGrad;
       ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
-
-      // Switch to Additive Blending for Authentic Volumetric Light Burst
-      ctx.globalCompositeOperation = 'lighter';
-
-      // 3. Ambient Prismatic Optical Flow Rings (Blooming radial waves)
-      drawOpticalBloomRings(angleProgress);
-
-      // 4. Primary Hypnotic Energy Rays (Volumetric Light Beams)
-      drawEnergyRays(angleProgress);
-
-      // 5. Counter-Rotating Fine Prismatic Filaments
-      drawPrismaticFilaments(angleProgress);
-
-      // 6. Radiant Floating Light Dust & Prismatic Motes
-      drawPrismaticDust(angleProgress);
-
-      // 7. Blinding Central Plasma Iris & Anamorphic Starburst
-      drawCentralLightBurst(angleProgress);
-
-      // 8. Subtle Chromatic Edge Dispersion & Lens Flares
-      drawLensFlares(angleProgress);
-
-      // Reset composite operation for UI framing
-      ctx.globalCompositeOperation = 'source-over';
-    }
-
-    // -------------------------------------------------------------
-    // Optical Bloom Rings (Pulsing expanding waves)
-    // -------------------------------------------------------------
-    function drawOpticalBloomRings(angleProgress) {
-      ctx.save();
-      const numRings = 5;
-      for (let r = 0; r < numRings; r++) {
-        // Continuous wave loop from center outward
-        const phase = (angleProgress * 2 + (r / numRings) * Math.PI * 2) % (Math.PI * 2);
-        const norm = phase / (Math.PI * 2);
-        const radius = 60 + norm * 520;
-        const alpha = Math.sin(norm * Math.PI) * 0.16;
-
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.lineWidth = 14 + norm * 26;
-        
-        if (r % 2 === 0) {
-          ctx.strokeStyle = `rgba(255, 60, 160, ${alpha})`;
-        } else {
-          ctx.strokeStyle = `rgba(255, 170, 0, ${alpha * 0.8})`;
-        }
-        ctx.stroke();
-      }
       ctx.restore();
-    }
 
-    // -------------------------------------------------------------
-    // Volumetric Energy Rays (Core Hypnotic Light Burst)
-    // -------------------------------------------------------------
-    function drawEnergyRays(angleProgress) {
+      // -----------------------------------------------------------
+      // 2. HERO ASTERISKS PAIR (The iconic Pinterest reference composition!)
+      // Interlocking diagonal composition with clean negative space:
+      // Hero 1 (Upper Right: Creamy Mint Pastel)
+      // Hero 2 (Lower Left: Vibrant Retro Sage Green)
+      // -----------------------------------------------------------
+      const hero1BaseX = 1140;
+      const hero1BaseY = 410;
+      const hero1X = hero1BaseX + Math.sin(t * tau) * 45;
+      const hero1Y = hero1BaseY + Math.cos(t * tau) * 35;
+
+      const hero2BaseX = 760;
+      const hero2BaseY = 610;
+      const hero2X = hero2BaseX - Math.cos(t * tau) * 45;
+      const hero2Y = hero2BaseY + Math.sin(t * tau) * 35;
+
+      // Glow halo behind Hero 2 (Smooth organic falloff to zero)
+      const halo2 = ctx.createRadialGradient(hero2X, hero2Y, 40, hero2X, hero2Y, 520);
+      halo2.addColorStop(0, theme.hero2.glow);
+      halo2.addColorStop(0.3, theme.hero2.glow);
+      halo2.addColorStop(0.7, 'rgba(0,0,0,0.05)');
+      halo2.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.save();
-      ctx.translate(cx, cy);
+      ctx.globalAlpha = 0.45;
+      ctx.fillStyle = halo2;
+      ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+      ctx.restore();
 
-      for (let i = 0; i < NUM_RAYS; i++) {
-        const ray = rayProfiles[i];
-        
-        // Exact integer loop rotations
-        // Main rotation: 1x full turn around center
-        const currentAngle = ray.baseAngle + angleProgress * ray.speedFactor;
-        
-        // Harmonic undulating wave modulation for organic rhythm
-        const wave = Math.sin(currentAngle * 4 + angleProgress * 2 + ray.harmonicPhase);
-        const len = ray.baseLen + wave * 90;
-        const spreadAngle = (ray.width / len) * (1 + 0.25 * Math.sin(angleProgress * 4 + i));
+      // Glow halo behind Hero 1 (Smooth organic falloff to zero)
+      const halo1 = ctx.createRadialGradient(hero1X, hero1Y, 30, hero1X, hero1Y, 480);
+      halo1.addColorStop(0, theme.hero1.glow);
+      halo1.addColorStop(0.3, theme.hero1.glow);
+      halo1.addColorStop(0.7, 'rgba(0,0,0,0.05)');
+      halo1.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = halo1;
+      ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+      ctx.restore();
 
-        // Coordinate endpoints of triangular/fan ray
-        const theta1 = currentAngle - spreadAngle;
-        const theta2 = currentAngle + spreadAngle;
-
-        const x1 = Math.cos(theta1) * len;
-        const y1 = Math.sin(theta1) * len;
-        const x2 = Math.cos(theta2) * len;
-        const y2 = Math.sin(theta2) * len;
-
-        // Dynamic multi-stop radial gradient for rich color dispersion
-        const grad = ctx.createRadialGradient(0, 0, 20, 0, 0, len);
-        
-        if (ray.hueGroup === 0) {
-          // Vibrant Hot Pink / Magenta into Warm Amber
-          grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
-          grad.addColorStop(0.15, 'rgba(255, 50, 150, 0.65)');
-          grad.addColorStop(0.5, 'rgba(255, 110, 60, 0.35)');
-          grad.addColorStop(0.85, 'rgba(180, 0, 90, 0.15)');
-          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        } else if (ray.hueGroup === 1) {
-          // Golden Amber / Neon Tangerine into Crimson
-          grad.addColorStop(0, 'rgba(255, 255, 240, 0.9)');
-          grad.addColorStop(0.2, 'rgba(255, 180, 20, 0.6)');
-          grad.addColorStop(0.55, 'rgba(255, 80, 20, 0.3)');
-          grad.addColorStop(0.85, 'rgba(140, 10, 50, 0.1)');
-          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        } else if (ray.hueGroup === 2) {
-          // Electric Cyan / Turquoise into Deep Indigo
-          grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
-          grad.addColorStop(0.18, 'rgba(0, 240, 255, 0.55)');
-          grad.addColorStop(0.5, 'rgba(99, 102, 241, 0.3)');
-          grad.addColorStop(0.85, 'rgba(50, 0, 120, 0.12)');
-          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        } else {
-          // Deep Violet / Ultraviolet into Magenta
-          grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
-          grad.addColorStop(0.2, 'rgba(192, 132, 252, 0.55)');
-          grad.addColorStop(0.55, 'rgba(236, 72, 153, 0.3)');
-          grad.addColorStop(0.85, 'rgba(80, 0, 100, 0.1)');
-          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        }
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.closePath();
-        ctx.fill();
+      // Determine arm counts (Default 6+6 matching Pinterest pin exactly)
+      let hero1Arms = 6;
+      let hero2Arms = 6;
+      if (armsMode === '8+6') {
+        hero1Arms = 8;
+        hero2Arms = 6;
+      } else if (armsMode === '8+8') {
+        hero1Arms = 8;
+        hero2Arms = 8;
       }
 
-      ctx.restore();
-    }
+      // Hero 2 (Lower-Left Hero: Vibrant Retro Sage Green)
+      // Radius: 340px, armWidth: 100px, 1 full counter-clockwise rotation per 10s
+      const hero2Rot = -t * tau + Math.PI / 6;
+      const hero2Scale = 1.0 + Math.cos(t * tau * 2) * 0.035;
+      const hero2Radius = 340 * hero2Scale;
+      const hero2ArmWidth = 100 * hero2Scale;
 
-    // -------------------------------------------------------------
-    // Prismatic Fine Filaments (Counter-Rotating Hairline Rays)
-    // -------------------------------------------------------------
-    function drawPrismaticFilaments(angleProgress) {
-      ctx.save();
-      ctx.translate(cx, cy);
-
-      for (let j = 0; j < NUM_FILAMENTS; j++) {
-        const fil = filamentProfiles[j];
-        // Counter rotation: -1x full cycle
-        const curAngle = fil.baseAngle + angleProgress * fil.speedFactor;
-        const wave = Math.sin(curAngle * 6 - angleProgress * 3);
-        const len = fil.baseLen + wave * 70;
-
-        const endX = Math.cos(curAngle) * len;
-        const endY = Math.sin(curAngle) * len;
-
-        ctx.lineWidth = 1.4;
-        const grad = ctx.createLinearGradient(0, 0, endX, endY);
-        if (fil.colorType === 0) {
-          grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-          grad.addColorStop(0.4, 'rgba(255, 60, 180, 0.45)');
-          grad.addColorStop(1, 'rgba(255, 60, 180, 0)');
-        } else if (fil.colorType === 1) {
-          grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-          grad.addColorStop(0.4, 'rgba(255, 200, 40, 0.4)');
-          grad.addColorStop(1, 'rgba(255, 200, 40, 0)');
-        } else {
-          grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-          grad.addColorStop(0.4, 'rgba(0, 240, 255, 0.35)');
-          grad.addColorStop(1, 'rgba(0, 240, 255, 0)');
-        }
-
-        ctx.strokeStyle = grad;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(endX, endY);
-        ctx.stroke();
-      }
-
-      ctx.restore();
-    }
-
-    // -------------------------------------------------------------
-    // Radiant Floating Light Dust & Prismatic Motes
-    // -------------------------------------------------------------
-    function drawPrismaticDust(angleProgress) {
-      ctx.save();
-      ctx.translate(cx, cy);
-
-      for (let i = 0; i < DUST_COUNT; i++) {
-        const d = dustParticles[i];
-        
-        // Exact integer loop orbits & radial oscillation
-        const curAngle = d.baseAngle + angleProgress * d.orbitCycle;
-        const curDist = d.baseDist + Math.sin(angleProgress * d.radialCycle * 2 + d.baseAngle) * 45;
-
-        const px = Math.cos(curAngle) * curDist;
-        const py = Math.sin(curAngle) * curDist;
-
-        const pulse = 0.5 + 0.5 * Math.sin(angleProgress * 4 + i);
-        const alpha = 0.3 + 0.5 * pulse;
-
-        ctx.beginPath();
-        ctx.arc(px, py, d.size * (0.8 + 0.4 * pulse), 0, Math.PI * 2);
-        ctx.fillStyle = d.color;
-        ctx.shadowColor = d.color;
-        ctx.shadowBlur = 10;
-        ctx.fill();
-      }
-
-      ctx.restore();
-    }
-
-    // -------------------------------------------------------------
-    // Blinding Central Light Burst & Star Flare Core
-    // -------------------------------------------------------------
-    function drawCentralLightBurst(angleProgress) {
-      ctx.save();
-      const pulse = Math.sin(angleProgress * 4) * 0.5 + 0.5;
-
-      // 1. Broad Radiant Aura Bloom
-      const coreR = 120 + pulse * 28;
-      const coreGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, coreR * 2.2);
-      coreGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-      coreGrad.addColorStop(0.15, 'rgba(255, 240, 160, 0.95)');
-      coreGrad.addColorStop(0.35, 'rgba(255, 60, 150, 0.7)');
-      coreGrad.addColorStop(0.65, 'rgba(168, 85, 247, 0.3)');
-      coreGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-      ctx.fillStyle = coreGrad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, coreR * 2.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 2. Pure White Radiant Hot Core
-      ctx.beginPath();
-      ctx.arc(cx, cy, 32 + pulse * 10, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = '#ffffff';
-      ctx.shadowBlur = 40;
-      ctx.fill();
-
-      // 3. Multi-point Starburst Spikes
-      const spikeCount = 12;
-      const spikeRot = angleProgress * 0.5; // slow smooth rotation
-      for (let s = 0; s < spikeCount; s++) {
-        const theta = spikeRot + (s / spikeCount) * Math.PI * 2;
-        const isMajor = s % 3 === 0;
-        const len = isMajor ? 280 + pulse * 80 : 160 + pulse * 40;
-        const w = isMajor ? 5 : 2.5;
-
-        const x = cx + Math.cos(theta) * len;
-        const y = cy + Math.sin(theta) * len;
-
-        const grad = ctx.createLinearGradient(cx, cy, x, y);
-        grad.addColorStop(0, '#ffffff');
-        grad.addColorStop(0.4, 'rgba(255, 140, 0, 0.8)');
-        grad.addColorStop(1, 'rgba(255, 0, 128, 0)');
-
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = w;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      }
-
-      ctx.restore();
-    }
-
-    // -------------------------------------------------------------
-    // Horizontal Anamorphic Flare & Prismatic Rings
-    // -------------------------------------------------------------
-    function drawLensFlares(angleProgress) {
-      ctx.save();
-      const pulse = Math.sin(angleProgress * 2) * 0.5 + 0.5;
-
-      // Horizontal Cinema Anamorphic Beam across full width
-      const beamH = 5 + pulse * 3;
-      const flareGrad = ctx.createLinearGradient(0, cy, CONFIG.width, cy);
-      flareGrad.addColorStop(0, 'rgba(255, 50, 150, 0)');
-      flareGrad.addColorStop(0.3, 'rgba(255, 100, 200, 0.25)');
-      flareGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.95)');
-      flareGrad.addColorStop(0.7, 'rgba(0, 220, 255, 0.25)');
-      flareGrad.addColorStop(1, 'rgba(0, 220, 255, 0)');
-
-      ctx.fillStyle = flareGrad;
-      ctx.fillRect(0, cy - beamH / 2, CONFIG.width, beamH);
-
-      // Thin Intense Core Line
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(cx - 380, cy - 1, 760, 2);
-
-      // Chromatic Optical Flare Rings
-      const ringRadii = [80, 170, 310, 480];
-      ringRadii.forEach((r, idx) => {
-        const ringPulse = Math.sin(angleProgress * 2 + idx) * 12;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r + ringPulse, 0, Math.PI * 2);
-        ctx.lineWidth = 1.2;
-        ctx.strokeStyle = idx % 2 === 0 ? 'rgba(255, 60, 180, 0.25)' : 'rgba(255, 170, 0, 0.2)';
-        ctx.stroke();
+      drawRetroAsterisk(ctx, hero2X, hero2Y, hero2Radius, hero2ArmWidth, hero2Arms, hero2Rot, theme.hero2.fill, {
+        glowColor: theme.hero2.glow,
+        glowBlur: 45,
+        shadowColor: theme.hero2.shadow,
+        shadowBlur: 40,
+        shadowOffsetX: -14,
+        shadowOffsetY: 20
       });
 
-      ctx.restore();
+      // Hero 1 (Upper-Right Hero: Creamy Pastel Mint White)
+      // Radius: 290px, armWidth: 86px, 1 full clockwise rotation per 10s
+      // Rich drop shadow cast over Hero 2 and the background
+      const hero1Rot = t * tau;
+      const hero1Scale = 1.0 + Math.sin(t * tau * 2) * 0.04;
+      const hero1Radius = 290 * hero1Scale;
+      const hero1ArmWidth = 86 * hero1Scale;
+
+      drawRetroAsterisk(ctx, hero1X, hero1Y, hero1Radius, hero1ArmWidth, hero1Arms, hero1Rot, theme.hero1.fill, {
+        glowColor: theme.hero1.glow,
+        glowBlur: 50,
+        shadowColor: theme.hero1.shadow,
+        shadowBlur: 38,
+        shadowOffsetX: -16,
+        shadowOffsetY: 24
+      });
+
+      // 3. Vignette (Dark retro edges)
+      const vigGrad = ctx.createRadialGradient(cx, cy, 540, cx, cy, 1080);
+      vigGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      vigGrad.addColorStop(0.65, 'rgba(0,0,0,0.25)');
+      vigGrad.addColorStop(1, theme.vignette);
+      ctx.fillStyle = vigGrad;
+      ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+
+      // -----------------------------------------------------------
+      // 4. RICH RETRO RISOGRAPH & PAPER GRAIN OVERLAY
+      // Seeded deterministically per frame for authentic 16mm / riso print flicker
+      // -----------------------------------------------------------
+      if (textureLevel !== 'OFF') {
+        const frameIndex = Math.floor(t * (CONFIG.totalFrames - 1));
+        const grainOffsetX = (frameIndex * 73) % TEX_SIZE;
+        const grainOffsetY = (frameIndex * 137) % TEX_SIZE;
+        const grainPattern = ctx.createPattern(textureCanvas, 'repeat');
+
+        let overlayAlpha = 0.48;
+        let softLightAlpha = 0.35;
+        if (textureLevel === 'MEDIUM') {
+          overlayAlpha = 0.32;
+          softLightAlpha = 0.22;
+        } else if (textureLevel === 'SUBTLE') {
+          overlayAlpha = 0.18;
+          softLightAlpha = 0.12;
+        }
+
+        // Pass A: Overlay for contrast and grit
+        ctx.save();
+        ctx.globalCompositeOperation = 'overlay';
+        ctx.globalAlpha = overlayAlpha;
+        ctx.translate(-grainOffsetX, -grainOffsetY);
+        ctx.fillStyle = grainPattern;
+        ctx.fillRect(grainOffsetX, grainOffsetY, CONFIG.width, CONFIG.height);
+        ctx.restore();
+
+        // Pass B: Soft-light for deep paper tooth integration
+        ctx.save();
+        ctx.globalCompositeOperation = 'soft-light';
+        ctx.globalAlpha = softLightAlpha;
+        ctx.translate(-grainOffsetX * 0.5, -grainOffsetY * 0.5);
+        ctx.fillStyle = grainPattern;
+        ctx.fillRect(grainOffsetX * 0.5, grainOffsetY * 0.5, CONFIG.width, CONFIG.height);
+        ctx.restore();
+      }
+
+      // 5. Optional Creator Reusability Overlay Guides (9:16 Shorts / Reel & 16:9 Title Safe)
+      if (showGuideOverlay) {
+        ctx.save();
+        // 9:16 Reel Safe Box in center (607.5px width x 1080px height)
+        const reelW = (CONFIG.height * 9) / 16;
+        const reelX = (CONFIG.width - reelW) / 2;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 8]);
+        ctx.strokeRect(reelX, 0, reelW, CONFIG.height);
+
+        // 16:9 Title Safe (80%)
+        const titleSafeW = CONFIG.width * 0.8;
+        const titleSafeH = CONFIG.height * 0.8;
+        ctx.strokeStyle = theme.hudAccent;
+        ctx.strokeRect((CONFIG.width - titleSafeW) / 2, (CONFIG.height - titleSafeH) / 2, titleSafeW, titleSafeH);
+
+        // Overlay Labels
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 13px monospace';
+        ctx.fillText('9:16 REEL / SHORTS SAFE ZONE', reelX + 16, 44);
+        ctx.fillText('16:9 TITLE SAFE (80%)', (CONFIG.width - titleSafeW) / 2 + 16, (CONFIG.height - titleSafeH) / 2 + 32);
+        ctx.restore();
+      }
     }
 
     // -------------------------------------------------------------
-    // GSAP Timeline & Deterministic Engine Integration
+    // GSAP Timeline & Playback Engine
     // -------------------------------------------------------------
     const animState = { progress: 0 };
 
@@ -536,7 +732,7 @@
     window.renderFrame = function(frameIndex, totalFrames) {
       if (!masterTimeline.paused()) {
         masterTimeline.pause();
-        document.body.classList.add('hide-controls');
+        document.getElementById('stage-container').classList.add('hide-controls');
       }
       const total = totalFrames || CONFIG.totalFrames;
       const p = Math.max(0, Math.min(1, frameIndex / (total - 1)));
@@ -549,7 +745,7 @@
     window.seekToProgress = function(progress) {
       if (!masterTimeline.paused()) {
         masterTimeline.pause();
-        document.body.classList.add('hide-controls');
+        document.getElementById('stage-container').classList.add('hide-controls');
       }
       const p = Math.max(0, Math.min(1, progress));
       animState.progress = p;
@@ -558,11 +754,11 @@
       return p;
     };
 
-    // Flag ready for Playwright automation
+    // Ready signal for automation
     window.__READY__ = true;
 
     // -------------------------------------------------------------
-    // Interactive Controls (Browser Preview Mode)
+    // Interactive HUD & Preview Controls
     // -------------------------------------------------------------
     const playBtn = document.getElementById('playBtn');
     const playIcon = document.getElementById('playIcon');
@@ -570,6 +766,11 @@
     const scrubber = document.getElementById('scrubber');
     const timeInfo = document.getElementById('timeInfo');
     const frameInfo = document.getElementById('frameInfo');
+    const themeBadge = document.getElementById('themeBadge');
+    const textureBtn = document.getElementById('textureBtn');
+    const guideToggle = document.getElementById('guideToggle');
+    const armsToggle = document.getElementById('armsToggle');
+    const themeButtons = document.querySelectorAll('[data-theme]');
 
     function updatePreviewHUD(p) {
       scrubber.value = p;
@@ -579,7 +780,9 @@
       frameInfo.textContent = currentFrame;
     }
 
-    playBtn.addEventListener('click', () => {
+    playBtn.addEventListener('click', togglePlayback);
+
+    function togglePlayback() {
       if (masterTimeline.paused()) {
         masterTimeline.play();
         playIcon.textContent = '⏸';
@@ -589,7 +792,7 @@
         playIcon.textContent = '▶';
         playText.textContent = 'PLAY';
       }
-    });
+    }
 
     scrubber.addEventListener('input', (e) => {
       masterTimeline.pause();
@@ -600,6 +803,77 @@
       masterTimeline.progress(p);
       renderScene(p);
       updatePreviewHUD(p);
+    });
+
+    // Theme Switcher buttons
+    themeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        themeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentThemeKey = btn.dataset.theme;
+        themeBadge.textContent = `THEME: ${THEMES[currentThemeKey].name}`;
+        playBtn.style.background = `linear-gradient(135deg, ${THEMES[currentThemeKey].hudAccent}, #22c55e)`;
+        scrubber.style.accentColor = THEMES[currentThemeKey].hudAccent;
+        renderScene(animState.progress);
+      });
+    });
+
+    // Texture Intensity Switcher
+    textureBtn.addEventListener('click', () => {
+      if (textureLevel === 'HEAVY') textureLevel = 'MEDIUM';
+      else if (textureLevel === 'MEDIUM') textureLevel = 'SUBTLE';
+      else if (textureLevel === 'SUBTLE') textureLevel = 'OFF';
+      else textureLevel = 'HEAVY';
+
+      textureBtn.textContent = `Texture: ${textureLevel}`;
+      textureBtn.classList.toggle('active', textureLevel !== 'OFF');
+      renderScene(animState.progress);
+    });
+
+    // Arms count toggle
+    armsToggle.addEventListener('click', () => {
+      if (armsMode === '6+6') armsMode = '8+6';
+      else if (armsMode === '8+6') armsMode = '8+8';
+      else armsMode = '6+6';
+
+      armsToggle.textContent = `Arms: ${armsMode}`;
+      renderScene(animState.progress);
+    });
+
+    // Safe Area / Reel Guides Toggle
+    guideToggle.addEventListener('click', () => {
+      showGuideOverlay = !showGuideOverlay;
+      guideToggle.textContent = `Guide: ${showGuideOverlay ? 'ON' : 'OFF'}`;
+      guideToggle.classList.toggle('active', showGuideOverlay);
+      renderScene(animState.progress);
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayback();
+      } else if (e.code === 'ArrowRight') {
+        masterTimeline.pause();
+        playIcon.textContent = '▶';
+        playText.textContent = 'PLAY';
+        const nextP = Math.min(1, animState.progress + 1 / (CONFIG.totalFrames - 1));
+        animState.progress = nextP;
+        masterTimeline.progress(nextP);
+        renderScene(nextP);
+        updatePreviewHUD(nextP);
+      } else if (e.code === 'ArrowLeft') {
+        masterTimeline.pause();
+        playIcon.textContent = '▶';
+        playText.textContent = 'PLAY';
+        const prevP = Math.max(0, animState.progress - 1 / (CONFIG.totalFrames - 1));
+        animState.progress = prevP;
+        masterTimeline.progress(prevP);
+        renderScene(prevP);
+        updatePreviewHUD(prevP);
+      } else if (e.code === 'KeyH') {
+        document.getElementById('stage-container').classList.toggle('hide-controls');
+      }
     });
 
     // Initial render frame 0
